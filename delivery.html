@@ -44,14 +44,15 @@ h1{margin:0;font-size:clamp(30px,4vw,44px);line-height:1.05;font-weight:800;lett
 .sub{color:#b5d0cc;margin:2px 0 12px}
 .grp{border:1px solid var(--line);border-radius:10px;margin-top:10px;overflow:hidden}
 .gh{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:transparent;border:0;text-align:left}.gh .c{margin-left:auto;color:var(--mute);font-size:12px}.gh .gn{color:var(--mute);font-weight:600}
-.rot{transform:rotate(-90deg)}.ok{width:22px;height:22px;border-radius:50%;background:var(--accent2);color:#04201f;display:grid;place-items:center}.ok svg{width:13px;height:13px;stroke-width:3}
+.rot{transform:rotate(-90deg)}.ok{width:22px;height:22px;min-width:22px;flex:none;border-radius:50%;background:var(--accent2);color:#04201f;display:grid;place-items:center}.ok svg{width:13px;height:13px;stroke-width:3}.done2 .ok{width:28px;height:28px;min-width:28px;background:rgba(47,212,180,.16);color:var(--accent2);box-shadow:inset 0 0 0 1.5px var(--accent2)}.done2 .ok svg{width:15px;height:15px;stroke-width:2.2}
 .rg{width:22px;height:22px;flex:none}
-.row{display:grid;grid-template-columns:20px 1fr 30px 84px 190px 14px;gap:12px;align-items:center;padding:9px 12px;border-top:1px solid var(--line);cursor:pointer}
+.row{display:grid;grid-template-columns:20px 1fr 30px 100px 180px 14px;gap:12px;align-items:center;padding:9px 12px;border-top:1px solid var(--line);cursor:pointer}
 .row:hover{background:#0d3230}.row.blocked{background:rgba(240,180,41,.08);box-shadow:inset 0 0 0 1px rgba(240,180,41,.5)}
 .cb{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--line2);background:none;padding:0;display:grid;place-items:center;color:#04201f}.cb.on{background:var(--accent2);border-color:var(--accent2)}.cb.bl{border-color:var(--amber)}.cb svg{width:12px;height:12px;stroke-width:3}
 .own{width:28px;height:28px;border-radius:50%;background:#12403d;display:grid;place-items:center;font-size:10.5px;font-weight:700}
-.pill{border:1px solid transparent;border-radius:99px;padding:3px 0;font-size:11px;font-weight:600;background:#12403d;color:var(--mute);width:84px;text-align:center}
+.pill{border:1px solid transparent;border-radius:99px;padding:3px 0;font-size:11px;font-weight:600;background:#12403d;color:var(--mute);width:100px;text-align:center}
 .pill.done{background:#0f4a43;color:var(--accent2)}.pill.in_progress{background:rgba(14,159,156,.28);border-color:var(--accent);color:#8ff0ec}.pill.blocked{background:#5c4812;color:#ffd978}
+.smenu{position:fixed;z-index:50;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:6px;display:grid;gap:2px;box-shadow:0 10px 30px #0008}.smenu button.pill{width:140px;text-align:left;background:none;border:0;border-radius:6px;padding:8px 10px;font-size:12.5px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:10px}.smenu button.pill:hover{background:var(--line)}.smenu button.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mute);flex:none}.smenu button.pill.in_progress::before{background:#7fd8ff}.smenu button.pill.done::before{background:var(--accent2)}.smenu button.pill.blocked::before{background:var(--amber)}.smenu button.pill.cur{font-weight:700} 
 .ev{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:12px;min-width:0}.ev span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mute{color:var(--mute)}
 .side{display:grid;gap:12px}.eb{font-size:10.5px;letter-spacing:.14em;font-weight:700;color:var(--accent2);text-transform:uppercase}
 .side h3{margin:8px 0 6px;font-size:21px;line-height:1.15;font-weight:800;letter-spacing:-.01em}.mu{color:#b5d0cc}
@@ -76,10 +77,9 @@ dialog h2{margin:0 0 4px;font-size:22px}label{color:var(--mute);font-size:12px;f
 <label class="s2">Title<input name="title" required></label>
 <label>Group<select name="group_id"></select></label>
 <label>Status<select name="status"><option value="todo">To do</option><option value="in_progress">In progress</option><option value="done">Done</option><option value="blocked">Blocked</option></select></label>
-<label>Owner initials<input name="owner" maxlength="3" placeholder="SC"></label>
 <label>Owner name<input name="owner_name" placeholder="Sarah"></label>
 <label>Due date<input type="date" name="due_date"></label>
-<label>Evidence<input name="evidence" placeholder="128 pages reviewed"></label>
+  
 <label class="s2">Description<textarea name="description" rows="2"></textarea></label>
 <label class="s2">Required evidence (comma separated)<input name="required_evidence" placeholder="Content plan, Money-page link targets"></label>
 <label class="s2">Completion rule<input name="completion_rule" placeholder="Attach the plan and record internal review."></label>
@@ -101,7 +101,7 @@ const fmt=d=>d?new Date(d+'T12:00').toLocaleDateString('en-GB',{day:'numeric',mo
 const ring=p=>`<svg class="rg" viewBox="0 0 22 22" fill="none" stroke-width="2.2"><circle cx="11" cy="11" r="9" stroke="#2c5d5a"/>${p?`<circle cx="11" cy="11" r="9" stroke="#f0b429" stroke-linecap="round" stroke-dasharray="${p*56.5} 56.5" transform="rotate(-90 11 11)"/>`:''}</svg>`;
 let S={clients:[],cid:null,phases:[],groups:[],items:[],pid:null,filter:'all',shut:{},menu:0,cv:0,edit:null,email:''};
 const cur=()=>S.clients.find(c=>c.id==S.cid),gOf=p=>S.groups.filter(g=>g.phase_id==p),done=a=>a.filter(i=>i.status=='done').length;
-const pItems=p=>{const g=gOf(p).map(x=>x.id);return S.items.filter(i=>g.includes(i.group_id))};
+const pItems=p=>{const g=gOf(p).map(x=>x.id);return S.items.filter(i=>g.includes(i.group_id)).sort((a,b)=>g.indexOf(a.group_id)-g.indexOf(b.group_id)||a.position-b.position)};
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
 
 async function boot(){const{data:{session}}=await sb.auth.getSession();if(session){S.email=session.user.email||'';load()}else login()}
@@ -142,11 +142,12 @@ function render(){
   if(bl)h+=`<div class="card warn internal"><div class="eb">${ic('al')}One blocker to resolve</div><h3>${esc(bl.blocker_title||bl.title)}</h3>${bl.description?`<p class="mu">${esc(bl.description)}</p>`:''}<p class="o2">Owner: ${esc(bl.owner_name||bl.owner||'Unassigned')}</p><button class="link" data-i="${bl.id}">View blocker ${ic('ar')}</button></div>`;
   if(nx.length)h+=`<div class="card"><b style="font-size:15px">Coming next</b>${nx.map(p=>`<div class="nx"><span class="num sm">${String(p.position).padStart(2,'0')}</span><div><b>${esc(p.days_label)}</b><p>${esc(p.subtitle)}</p></div></div>`).join('')}</div>`;
   h+=`<div class="card done2"><span class="ok">${ic('ck')}</span><div><b>What counts as done?</b><p>Named owner. Completed work. Evidence attached. Approval recorded where required.</p></div></div></div></div>`}
- $('#root').innerHTML=h+`</main></div>`}
+ $('#root').innerHTML=h+`</main></div>`+(S.sm?`<div class="smenu" style="left:${S.sm.x}px;top:${S.sm.y}px">${CYC.map(s=>`<button class="pill ${s}${(S.items.find(x=>x.id==S.sm.id)||{}).status==s?' cur':''}" data-v="${s}">${ST[s]}</button>`).join('')}</div>`:'')}
 
 document.addEventListener('click',async e=>{
- const t=e.target.closest('[data-t],[data-s],[data-i],[data-p],[data-f],[data-g],[data-c],#cb,#nc,#add,#so,#cv');
+ const t=e.target.closest('[data-t],[data-s],[data-i],[data-p],[data-f],[data-g],[data-c],[data-v],#cb,#nc,#add,#so,#cv');
  if(S.menu&&!(t&&(t.id=='cb'||t.id=='nc'||t.dataset.c))&&!e.target.closest('.cw')){S.menu=0;render()}
+ if(S.sm&&!(t&&(t.dataset.s||t.dataset.v))){S.sm=null;render();return}
  if(!t||!$('#root').contains(t))return;const d=t.dataset,it=id=>S.items.find(x=>x.id==id);
  if(t.id=='cb'){S.menu=!S.menu;render()}
  else if(d.c){S.menu=0;load(d.c)}
@@ -158,11 +159,12 @@ document.addEventListener('click',async e=>{
  else if(d.f){S.filter=d.f;render()}
  else if(d.g){S.shut[d.g]=!S.shut[d.g];render()}
  else if(d.t){const i=it(d.t);setStatus(i,i.status=='done'?'todo':'done')}
- else if(d.s){const i=it(d.s);setStatus(i,CYC[(CYC.indexOf(i.status)+1)%4])}
+ else if(d.s){const r=t.getBoundingClientRect(),mh=CYC.length*34+12;S.sm=S.sm&&S.sm.id==d.s?null:{id:d.s,x:Math.max(8,r.left),y:r.bottom+4+mh>innerHeight?r.top-mh-4:r.bottom+4};render()}
+ else if(d.v){const i=it(S.sm.id);S.sm=null;setStatus(i,d.v)}
  else if(d.i&&!S.cv)openItem(d.i)});
 async function setStatus(i,s){const{error}=await sb.from('deliverables').update({status:s}).eq('id',i.id);error?toast(error.message):(i.status=s,render())}
 
-const FN=['title','group_id','status','owner','owner_name','due_date','evidence','description','required_evidence','completion_rule','blocker_title','blocker'];
+const FN=['title','group_id','status','owner_name','due_date','description','required_evidence','completion_rule','blocker_title','blocker'];
 function openItem(id){const f=$('#f').elements,ph=S.phases.find(p=>p.id==S.pid),i=id&&S.items.find(x=>x.id==id);S.edit=id||null;
  f.group_id.innerHTML=gOf(ph.id).map(g=>`<option value="${g.id}">${esc(g.title)}</option>`).join('');
  $('#dt').textContent=i?'Edit deliverable':'Add deliverable';$('#del').style.display=i?'':'none';$('#fe').textContent='';
@@ -170,7 +172,7 @@ function openItem(id){const f=$('#f').elements,ph=S.phases.find(p=>p.id==S.pid),
 $('#cn').onclick=()=>$('#dlg').close();
 $('#del').onclick=async()=>{if(!confirm('Delete this deliverable?'))return;const{error}=await sb.from('deliverables').delete().eq('id',S.edit);if(error)$('#fe').textContent=error.message;else{$('#dlg').close();load()}};
 $('#f').onsubmit=async e=>{e.preventDefault();const f=e.target.elements,v={};
- FN.forEach(k=>v[k]=f[k].value.trim()||null);v.owner=v.owner&&v.owner.toUpperCase();v.title=f.title.value.trim();v.status=f.status.value;v.group_id=f.group_id.value;
+ FN.forEach(k=>v[k]=f[k].value.trim()||null);const w=(v.owner_name||'').split(/\s+/).filter(Boolean);v.owner=w.length>1?(w[0][0]+w[1][0]).toUpperCase():(w[0]||'').slice(0,2).toUpperCase()||null;v.title=f.title.value.trim();v.status=f.status.value;v.group_id=f.group_id.value;
  if(!S.edit)v.position=S.items.filter(x=>x.group_id==v.group_id).length+1;
  const{error}=await(S.edit?sb.from('deliverables').update(v).eq('id',S.edit):sb.from('deliverables').insert(v));
  if(error)$('#fe').textContent=error.message;else{$('#dlg').close();load()}};

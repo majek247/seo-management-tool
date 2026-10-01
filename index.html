@@ -17,7 +17,7 @@ aside{background:var(--side);border-right:1px solid var(--line);padding:18px 14p
 .brand{display:flex;align-items:center;gap:8px}.brand b{display:block;font-size:19px;font-weight:800;line-height:1}.brand small{font-size:7.5px;letter-spacing:.12em}
 .cw{position:relative}.client{width:100%;display:flex;align-items:center;gap:10px;padding:9px;background:var(--panel);border:1px solid var(--line);border-radius:10px;text-align:left}
 .client span:nth-child(2){flex:1;min-width:0}.client b,.client small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.av{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-weight:800;flex:none}.av.r{border-radius:50%;font-size:11px}
+.av{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-weight:800;flex:none;position:relative;overflow:hidden}.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}.menu .av{width:24px;height:24px;font-size:12px;border-radius:6px}.menu .av img{padding:3px}.av.r{border-radius:50%;font-size:11px}
 .menu{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:5;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:6px;display:grid;gap:2px}
 .menu button{background:none;border:0;padding:8px 10px;border-radius:6px;text-align:left;display:flex;gap:8px;align-items:center}.menu button:hover{background:var(--line)}.menu .new{color:var(--accent2);font-weight:600}
 .nv{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--mute);font-weight:500;text-decoration:none}.nv:hover{background:#0b2e2c}.nv.on{background:#0e3b39;color:var(--text);font-weight:600}
@@ -35,7 +35,7 @@ dialog h2{margin:0 0 4px;font-size:22px}label{color:var(--mute);font-size:12px;f
 @media(max-width:1000px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.bot,nav{display:none}iframe{height:calc(100vh - 80px)}}
 </style></head>
 <body><div id="root"></div>
-<dialog id="cdlg"><form id="cf"><h2>New client</h2><label>Client name<input name="name" required></label><label>Start date<input type="date" name="start" required></label>
+<dialog id="cdlg"><form id="cf"><h2>New client</h2><label>Client name<input name="name" required></label><label>Website<input name="website" placeholder="acme.com"></label><label>Start date<input type="date" name="start" required></label>
 <p class="fe" id="cfe"></p><div class="acts"><button type="button" class="ghost" id="ccn">Cancel</button><button class="btn">Create client</button></div><p class="hint">Creates the 90-day plan from your template.</p></form></dialog>
 <script src="config.js"></script>
 <script>
@@ -49,19 +49,21 @@ const NAV=[['overview','Client overview','home'],['delivery','90-day delivery','
 const FOOT=[['playbook','Brand playbook','book'],['settings','Settings','cog']];
 let S={clients:[],cid:null,menu:0,email:''};
 const page=()=>(location.hash||'#delivery').slice(1);
+const host=u=>{try{return new URL(/^https?:\/\//.test(u)?u:'https://'+u).hostname}catch(e){return ''}};
+const logo=c=>{const h=host(c?.website);return `<span class="av">${esc((c?.name||'+')[0].toUpperCase())}${h?`<img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(h)}&sz=64" alt="" onerror="this.remove()">`:''}</span>`};
 
 async function boot(){const{data:{session}}=await sb.auth.getSession();if(session){S.email=session.user.email||'';start()}else login()}
 function login(msg=''){$('#root').innerHTML=`<div class="card login"><div class="brand">${MARK}<b>GrowUp</b></div><h2>Sign in</h2><input id="em" type="email" placeholder="Email" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button class="btn" id="go">Sign in</button><p class="fe">${esc(msg)}</p></div>`;
  $('#pw').onkeydown=e=>e.key=='Enter'&&$('#go').click();
  $('#go').onclick=async()=>{const{data,error}=await sb.auth.signInWithPassword({email:$('#em').value,password:$('#pw').value});if(error)login(error.message);else{S.email=data.user.email;start()}}}
-async function loadClients(){const{data}=await sb.from('clients').select('id,name').order('created_at');S.clients=data||[];S.cid=localStorage.cid;
+async function loadClients(){const{data}=await sb.from('clients').select('id,name,website').order('created_at');S.clients=data||[];S.cid=localStorage.cid;
  if(!S.clients.find(c=>c.id==S.cid)){S.cid=S.clients[0]?.id;S.cid?localStorage.cid=S.cid:localStorage.removeItem('cid')}}
 async function start(){await loadClients();
  $('#root').innerHTML=`<div class="app"><aside id="sb"></aside><main><iframe id="fr" title="Page"></iframe><div id="soon" class="card empty" hidden></div></main></div>`;route()}
 function side(){const cl=S.clients.find(c=>c.id==S.cid),nm=(S.email||'user').split('@')[0],cur=page(),link=([id,t,i])=>`<a class="nv ${id==cur?'on':''}" href="#${id}">${ic(i)}${t}</a>`;
  $('#sb').innerHTML=`<div class="brand">${MARK}<div><b>GrowUp</b><small>SEO &amp; AEO CONSULTANCY</small></div></div>
- <div class="cw"><button class="client" id="cb"><span class="av">${esc((cl?.name||'+')[0].toUpperCase())}</span><span><b>${esc(cl?.name||'No client yet')}</b><small>Client workspace</small></span>${ic('ud')}</button>
- ${S.menu?`<div class="menu">${S.clients.map(c=>`<button data-c="${c.id}">${esc(c.name)}</button>`).join('')}<button class="new" id="nc">${ic('plus')}New client</button></div>`:''}</div>
+ <div class="cw"><button class="client" id="cb">${logo(cl)}<span><b>${esc(cl?.name||'No client yet')}</b><small>Client workspace</small></span>${ic('ud')}</button>
+ ${S.menu?`<div class="menu">${S.clients.map(c=>`<button data-c="${c.id}">${logo(c)}${esc(c.name)}</button>`).join('')}<button class="new" id="nc">${ic('plus')}New client</button></div>`:''}</div>
  <nav>${NAV.map(link).join('')}</nav>
  <div class="bot">${FOOT.map(link).join('')}<button class="me" id="so" title="Sign out"><span class="av r">${esc(nm.slice(0,2).toUpperCase())}</span><span>${esc(nm[0].toUpperCase()+nm.slice(1))} · GrowUp</span>${ic('cr')}</button></div>`}
 async function route(){const id=page(),it=[...NAV,...FOOT].find(x=>x[0]==id)||NAV[1],file=it[0]+'.html';side();
@@ -83,6 +85,6 @@ $('#ccn').onclick=()=>$('#cdlg').close();
 $('#cf').onsubmit=async e=>{e.preventDefault();const f=e.target.elements;
  const{data,error}=await sb.rpc('create_client_from_template',{p_name:f.name.value.trim(),p_start:f.start.value});
  if(error){$('#cfe').textContent=error.message;return}
- $('#cdlg').close();await loadClients();S.cid=data;localStorage.cid=data;side();reload()};
+ await sb.from('clients').update({website:f.website.value.trim()||null}).eq('id',data);$('#cdlg').close();await loadClients();S.cid=data;localStorage.cid=data;side();reload()};
 boot();
 </script></body></html>
