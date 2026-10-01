@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI visibility</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#061a1e;--p:#0a2a30;--p2:#0d353c;--b:#15474e;--t:#eaf5f6;--m:#8db0b5;--a:#10b3c9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:12.5px/1.35 Inter,system-ui,sans-serif;padding:12px 16px}
+svg{vertical-align:middle;flex:none}button,select,input,textarea{font:inherit;color:var(--t);background:var(--p);border:1px solid var(--b);border-radius:6px;padding:7px 11px;cursor:pointer}
+button{display:inline-flex;align-items:center;gap:7px}.pri{background:var(--a);border-color:var(--a);color:#02262c;font-weight:600}
+.bc{color:var(--m);display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.bc b{color:var(--t)}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}h1{font-size:31px;margin:0;letter-spacing:-.6px;line-height:1.1}.hd p{margin:3px 0 0;font-size:16px}.hd>div:last-child{display:flex;gap:8px;padding-top:2px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}.tabs button{justify-content:center;padding:9px}.tabs .on{background:#0e7f90;border-color:var(--a)}
+.bar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;border:1px solid var(--b);border-radius:8px;padding:6px 10px;margin-bottom:8px;background:var(--p)}
+.bar label{display:block;font-size:10px;color:var(--m);margin-bottom:2px}.fld{position:relative}.fld select{padding-left:30px;min-width:100px}.fld svg{position:absolute;left:9px;bottom:9px;pointer-events:none}
+.seg{display:flex;border:1px solid var(--b);border-radius:6px;overflow:hidden}.seg button{border:0;border-radius:0;font-size:11px;padding:7px 9px;background:transparent}.seg .on{background:var(--a);color:#02262c;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.st{display:flex;gap:10px;align-items:center;background:var(--p);border:1px solid var(--b);border-radius:8px;padding:10px}
+.ci{width:38px;height:38px;border:1px solid var(--b);border-radius:50%;display:grid;place-items:center;flex:none}.st b{font-size:20px}.st small,.m{color:var(--m);font-size:10.5px}.st>div:last-child{flex:1}.prog{height:4px;background:var(--b);border-radius:3px;margin-top:6px}.prog i{display:block;height:100%;background:var(--a);border-radius:3px}
+.note{font-size:10.5px;color:var(--m);display:flex;justify-content:space-between;margin:5px 0 7px}
+.card{background:var(--p);border:1px solid var(--b);border-radius:8px;padding:10px 12px;margin-bottom:8px}.sh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}h2{font-size:18px;margin:0}.sh a{color:var(--a);cursor:pointer;font-size:12px}
+table{width:100%;border-collapse:separate;border-spacing:2px}th{font-weight:400;color:var(--m);text-align:left;padding:6px 8px;font-size:11.5px}th.c{text-align:center}td{background:var(--p);padding:0}td.n{padding:6px 8px;background:#0b2f35}td.c{text-align:center;padding:10px 0;font-weight:600;font-size:12px}tr.r{cursor:pointer}tr.sel td.n{outline:1px solid var(--a)}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:3px 11px;border-radius:14px;font-size:11px;background:#3a2f10;border:1px solid #7a5d12;color:#ffd77a;min-width:118px}.pill i{width:9px;height:9px;border-radius:50%;background:#f0b429}.pill.grey{background:#1b2c36;border-color:#33495a;color:#c3d0da}.pill.grey i{background:#7b8794}.pill.blue{background:#0e2f4d;border-color:#1c5b94;color:#b8dcff}.pill.blue i{background:#2f9bff}.pill.sm{min-width:0;padding:2px 9px;font-size:10px}
+.two{display:grid;grid-template-columns:1.15fr 1fr;gap:8px}.two .card{margin:0}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--b);border-radius:6px;padding:3px 9px;font-size:11px;margin:0 8px;vertical-align:middle}
+.mini{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px;margin:8px 0}.mini>div,.src{border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:11.5px}.mini b{color:var(--t);font-weight:500}.src{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}.src>span:first-child{display:flex;gap:9px;align-items:center}
+.bad{color:#ff7b72!important}.ok{color:#4ade80!important}.tag{font-size:9.5px;color:#f0b429;border:1px solid #7a5d12;padding:2px 7px;border-radius:4px;background:#2c2510}
+.kv{display:grid;grid-template-columns:85px 1fr;gap:4px 8px;font-size:11px;margin:10px 0}.kv span:nth-child(odd){color:var(--m)}
+.lnk{color:var(--a);cursor:pointer;text-decoration:none;font-size:11.5px}.empty{padding:16px;color:var(--m);text-align:center}.hide{display:none}.ed{padding:3px 7px;background:transparent;border:0;color:var(--m)}
+.mo{position:fixed;inset:0;background:#000a;display:grid;place-items:center;z-index:9}.mo form{background:var(--p);border:1px solid var(--b);border-radius:10px;padding:16px;width:min(460px,92vw);display:grid;gap:8px}.mo label{font-size:11px;color:var(--m)}.mo input,.mo select,.mo textarea{width:100%;cursor:text}.mo .r{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+@media(max-width:900px){.stats,.two,.tabs{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div class="bc"><span id="crumb">Clients / <b>AI visibility</b></span><button onclick="top.location.href='index.html'">Client view <span id="ex"></span></button></div>
+<div class="hd"><div><h1>Track the answers that shape buying decisions.</h1><p>Monitor money prompts, inspect the evidence and plan the next move.</p></div>
+<div><button class="pri" onclick="edit('prompt')" id="b1"></button><button onclick="runChecks()" id="b2"></button></div></div>
+<div class="tabs" id="tabs"></div>
+<div class="bar"><span class="m" style="font-size:11px">AI platform</span><div class="seg" id="plat"></div>
+<div class="fld"><label>Date range</label><span id="i1"></span><select id="days"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select></div>
+<div class="fld"><label>Location &amp; language</label><span id="i2"></span><select id="loc"><option>UK · English</option><option>US · English</option><option>NG · English</option><option>DE · German</option></select></div>
+<div class="fld"><label>Buyer intent</label><span id="i3"></span><select id="intent"><option value="all">All</option><option>Category</option><option>Alternatives</option><option>Integration</option><option>Branded</option></select></div>
+<button style="margin-left:auto;font-size:11px;color:var(--a)" onclick="edit('settings')" id="b3"></button></div>
+<div class="stats" id="stats"></div>
+<div class="note" style="justify-content:flex-start;gap:8px" id="n1"></div>
+<div class="card" data-t="money"><div class="sh"><div><h2>Money-prompt coverage</h2><span class="m">Recommendation frequency across repeated checks · Latest completed run</span></div><a id="all" onclick="S.all=!S.all;draw()"></a></div><div id="cov"></div><div class="note"><span id="foot"></span><span id="foot2"></span></div></div>
+<div class="two" data-t="money resp"><div class="card" id="insp"></div><div class="card" id="next"></div></div>
+<div class="card" data-t="money act" style="margin-top:8px"><div class="sh"><div><h2 style="display:inline">Actions to review</h2> <span class="m" style="margin-left:8px">Proposals from prompt evidence</span></div><span><a class="lnk" onclick="edit('action')">+ Add action</a> &nbsp; <a class="lnk" id="va"></a></span></div><div id="acts"></div><div class="note"><span id="flow"></span><span id="demo"></span></div></div>
+<div class="card hide" data-t="acc" id="accbox"></div>
+<script>
+const SUPABASE_URL = 'https://yvbxbgzkdqontarzkmoi.supabase.co',
+      SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2YnhiZ3prZHFvbnRhcnprbW9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NTA5NzcsImV4cCI6MjEwNjQyNjk3N30.uMds3Kt9hj6pLSBcmf2L3QO3IhBiJuZShOAG0bwWuPk'; // same as authority.html
+const cid=()=>new URLSearchParams(location.search).get('client')||['client_id','selectedClient','currentClient','growup_client','activeClient'].map(k=>localStorage.getItem(k)).find(Boolean); // match your client switcher
+const PL=['ChatGPT','Claude','Gemini','Perplexity'];
+const S={tab:'money',plat:'all',days:7,intent:'all',sel:null,all:false,P:[],R:[],A:[],set:{},name:'Client'};
+const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const IC={grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',star:'<path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>',bars:'<path d="M5 20V10M12 20V4M19 20v-7M3 20h18"/>',cal:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',tgt:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',set:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',doc:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',chk:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',lay:'<path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5"/>',arr:'<path d="M5 12h14M13 6l6 6-6 6"/>',ext:'<path d="M7 17 17 7M9 7h8v8"/>',warn:'<path d="M12 3 2 20h20zM12 10v5M12 17.5v.5"/>',plus:'<path d="M12 5v14M5 12h14"/>',ref:'<path d="M20 12a8 8 0 1 1-2.5-5.8M20 4v5h-5"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>',home:'<path d="M3 11 12 4l9 7v9H3z"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',book:'<path d="M4 5h7v15H4zM13 5h7v15h-7z"/>'};
+const I=(n,s=16,c='currentColor')=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const PI={ChatGPT:'<circle cx="12" cy="12" r="8" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M12 4v8l7 4M12 12 5 16" stroke="#fff" stroke-width="1.6" fill="none"/>',Claude:'<path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19" stroke="#e8805a" stroke-width="2.4" stroke-linecap="round"/>',Gemini:'<path d="M12 2c1 6 4 9 10 10-6 1-9 4-10 10-1-6-4-9-10-10 6-1 9-4 10-10z" fill="#5b8cff"/>',Perplexity:'<path d="M12 2v20M5 8l7 5 7-5M5 8v8l7 6 7-6V8L12 2z" stroke="#2ec4d6" stroke-width="1.7" fill="none"/>'};
+const PIC=(p,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24">${PI[p]}</svg>`;
+$('ex').innerHTML=I('ext',13);$('b1').innerHTML=I('plus')+'Add prompts';$('b2').innerHTML=I('doc',14)+'Run checks '+I('ref',14);$('i1').innerHTML=I('cal',14);$('i2').innerHTML=I('globe',14);$('i3').innerHTML=I('tgt',14);$('b3').innerHTML=I('set',13)+'Model &amp; run settings '+I('arr',12);$('n1').innerHTML=I('info',13)+'Platform results stay separate. Recommendations and citations are different signals.';$('flow').textContent='Approve → Assign owner → Deliver → Recheck the same prompts';
+$('tabs').innerHTML=[['money','Money prompts','grid'],['resp','Responses & sources','chat'],['act','Recommended actions','star'],['acc','Brand accuracy','bars']].map(t=>`<button data-k="${t[0]}" onclick="S.tab='${t[0]}';draw()">${I(t[2])}${t[1]}</button>`).join('');
+$('plat').innerHTML=`<button data-k="all" onclick="S.plat='all';draw()">All tools</button>`+PL.map(p=>`<button data-k="${p}" onclick="S.plat='${p}';draw()">${PIC(p,14)}${p}</button>`).join('');
+$('days').onchange=e=>{S.days=+e.target.value;load()};$('intent').onchange=e=>{S.intent=e.target.value;draw()};
+$('loc').onchange=e=>save('ai_settings',{client_id:S.c,location:e.target.value},'client_id');
+let sb;
+function fail(m){$('cov').innerHTML='<div class="empty">'+esc(m)+'</div>'}
+async function load(){
+ try{sb=sb||supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){return fail('Supabase keys missing: edit SUPABASE_URL and SUPABASE_KEY at the top of the script.')}
+ let c=cid();if(!c){const f=await sb.from('clients').select('*').order('created_at').limit(1);c=f.data&&f.data[0]&&f.data[0].id}
+ if(!c)return fail('No client found. Edit the cid() line to match your client switcher.');S.c=c;
+ const since=new Date(Date.now()-S.days*864e5).toISOString();
+ const [cl,p,r,a,s]=await Promise.all([sb.from('clients').select('*').eq('id',c).maybeSingle(),
+  sb.from('ai_prompts').select('*').eq('client_id',c).eq('active',true).order('sort').order('created_at'),
+  sb.from('ai_runs').select('*,ai_sources(*)').eq('client_id',c).gte('run_at',since).order('run_at',{ascending:false}),
+  sb.from('ai_actions').select('*').eq('client_id',c).order('created_at'),
+  sb.from('ai_settings').select('*').eq('client_id',c).maybeSingle()]);
+ if(p.error)return fail(p.error.message+' (run the SQL first)');
+ S.P=p.data||[];S.R=r.data||[];S.A=a.data||[];S.set=s.data||{};
+ S.name=S.set.brand||(cl.data&&(cl.data.name||cl.data.client_name))||'Client';
+ $('crumb').innerHTML=`Clients &nbsp;/&nbsp; ${esc(S.name)} &nbsp;/&nbsp; <b>AI visibility</b>`;
+ if(S.set.location)$('loc').value=S.set.location;
+ if(!S.P.find(x=>x.id===S.sel))S.sel=S.P[0]&&S.P[0].id;draw();
+}
+const done=(pid,pl)=>S.R.filter(r=>r.prompt_id===pid&&r.status==='complete'&&(!pl||r.platform===pl));
+const cell=(pid,pl)=>{const d=done(pid,pl);return{n:d.length,rec:d.filter(r=>r.recommended).length}};
+function draw(){
+ document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===S.tab));
+ document.querySelectorAll('#plat button').forEach(b=>b.classList.toggle('on',b.dataset.k===S.plat));
+ document.querySelectorAll('[data-t]').forEach(e=>e.classList.toggle('hide',!e.dataset.t.split(' ').includes(S.tab)));
+ const P=S.P.filter(p=>S.intent==='all'||p.intent_type===S.intent),pf=S.plat==='all'?null:S.plat,sp=pf||'ChatGPT',rep=S.set.repeats||5,n=P.length||1;
+ const recd=P.filter(p=>done(p.id,sp).some(r=>r.recommended)).length,acc=P.filter(p=>{const d=done(p.id,sp);return d[0]&&d[0].accurate}).length;
+ const tools=new Set(S.R.filter(r=>r.status==='complete').map(r=>r.platform)).size,last=S.R.find(r=>r.status==='complete');
+ const st=(ic,v,l,sub,pc)=>`<div class="st"><div class="ci">${I(ic,18)}</div><div><b>${v}</b> ${l}<br><small>${sub}</small>${pc!=null?`<div class="prog"><i style="width:${pc}%"></i></div>`:''}</div></div>`;
+ $('stats').innerHTML=st('chat',P.length,'Money prompts','Comparison · Category · Pricing · Use case')+st('doc',`${recd} / ${P.length}`,'Recommended prompts',sp+' · latest completed run',recd/n*100)+st('chk',`${acc} / ${P.length}`,'Accurate descriptions',sp+' · latest completed run',acc/n*100)+st('lay',`<span style="font-size:14px">Coverage: ${tools} tools</span>`,'',rep+' repeats / prompt / tool');
+ const pls=pf?[pf]:PL,shown=S.all?P:P.slice(0,4);
+ $('cov').innerHTML=P.length?`<table><tr><th style="width:36%">Money prompt / intent</th>${pls.map(x=>`<th class="c">${PIC(x,14)} ${x}</th>`).join('')}<th>Priority gap</th><th></th></tr>`+shown.map(p=>`<tr class="r ${p.id===S.sel?'sel':''}" onclick="S.sel='${p.id}';draw()"><td class="n"><b style="font-weight:500">${esc(p.prompt)}</b><br><span class="m">${esc(p.intent_type||'')}${p.funnel_stage?' · '+esc(p.funnel_stage):''}</span></td>`+pls.map(x=>{const c=cell(p.id,x);return c.n?`<td class="c" style="background:rgba(16,179,201,${.1+.5*c.rec/c.n})">${c.rec} / ${c.n}</td>`:'<td class="c">—</td>'}).join('')+`<td class="n">${p.gap_label?`<span class="pill ${p.gap_tone==='grey'?'grey':''}"><i></i>${esc(p.gap_label)}</span>`:''}</td><td class="n" style="width:30px"><button class="ed" onclick="event.stopPropagation();edit('prompt','${p.id}')">${I('edit',14)}</button></td></tr>`).join('')+'</table>':'<div class="empty">No prompts yet. Click Add prompts.</div>';
+ $('all').innerHTML=P.length>4?(S.all?'Show fewer':`View all ${P.length} `+I('arr',13)):'';
+ $('foot').textContent=last?`Last complete: ${new Date(last.run_at).toLocaleString('en-GB',{timeZone:'UTC',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} UTC · Stored response snapshots`:'No completed runs in this range.';
+ $('foot2').textContent=`Values = runs recommending ${S.name} / completed repeats. — = run incomplete.`;
+ $('demo').textContent=S.P.some(p=>p.is_demo)?'Illustrative data · Results vary by model, settings, date and repeated run.':'';
+ inspect();actions(P);
+}
+function inspect(){
+ const p=S.P.find(x=>x.id===S.sel);if(!p){$('insp').innerHTML='<div class="empty">Select a prompt.</div>';$('next').innerHTML='';return}
+ const pl=S.plat==='all'?'ChatGPT':S.plat,rep=S.set.repeats||5,r=done(p.id,pl)[0],src=(r&&r.ai_sources)||[];
+ const lst=src.filter(s=>/listicle/i.test(s.kind||'')).length,cmp=src.filter(s=>/competitor/i.test(s.kind||'')).length;
+ $('insp').innerHTML=`<div class="sh"><div><h2 style="display:inline">Inspect a missed recommendation</h2><span class="chip">${PIC(pl,14)} ${pl}</span></div><span class="m">${r?`Run ${r.repeat_n} of ${rep} · ${new Date(r.run_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:''}</span></div><div style="font-size:14px">“${esc(p.prompt)}”</div>`+(r?`<div class="mini"><div class="m">Recommended brands<br><b>${esc((r.brands||[]).join(' · '))}</b></div><div class="m">${esc(S.name)}<br><b class="${r.recommended?'ok':'bad'}">${r.recommended?'Recommended':'Not recommended'}</b></div><div class="m">Sources observed<br><b>${[lst&&lst+' listicle'+(lst>1?'s':''),cmp&&cmp+' competitor page'].filter(Boolean).join(' · ')||src.length+' sources'}</b></div></div>`+src.slice(0,2).map(s=>`<div class="src"><span>${I('doc',18)}<span><b>${esc(s.publisher)}</b> · ${esc(s.title)}<br><span class="m">${s.client_present?'Client present':'Client absent'} · ${esc(s.kind||'')}</span></span></span>${s.url?`<a class="lnk" target="_blank" rel="noopener" href="${esc(s.url)}">Open source ${I('ext',12)}</a>`:'<span class="lnk">Open source '+I('ext',12)+'</span>'}</div>`).join('')+`<div class="note"><span>Sources shown only where returned by the tool.</span><a class="lnk" onclick="S.tab='resp';draw()">View full response &amp; sources ${I('arr',12)}</a></div>`:`<div class="empty">No completed run for this prompt on ${pl} in this range.</div>`);
+ const a=S.A.find(x=>x.prompt_id===p.id)||S.A[0];
+ $('next').innerHTML=a?`<div class="sh"><h2>Suggested next move</h2><span class="tag">EVIDENCE-LED · ${esc((a.status||'').toUpperCase())}</span></div><h2 style="margin-top:6px">${esc(a.move_title||a.action)}</h2><p style="font-size:12.5px;margin:6px 0">${esc(a.rationale||'')}</p><div class="kv"><span>Evidence:</span><span>${esc(a.evidence||'')}</span><span>Destination:</span><span>${esc(a.destination||'')}</span><span>Suggested owner:</span><span>${esc(a.owner||'')}</span></div><button class="pri" style="width:57%;justify-content:center" onclick="setStatus('${a.id}','In progress')">Review outreach suggestion ${I('arr',14)}</button> <button style="width:40%;justify-content:center" onclick="S.tab='resp';draw()">Open source evidence</button><div class="note" style="justify-content:flex-start">Creates an Authority target after approval. No automatic outreach.</div>`:'<div class="empty">No suggested actions yet.</div>';
+}
+const WI={Content:'doc',Authority:'link','Brand playbook':'book',Strategy:'tgt'};
+function actions(P){
+ const ids=new Set(P.map(p=>p.id)),A=S.A.filter(a=>!a.prompt_id||ids.has(a.prompt_id));
+ $('va').innerHTML=A.length>4?(S.all?'Show fewer':'View all '+I('arr',12)):'';$('va').onclick=()=>{S.all=!S.all;draw()};
+ $('acts').innerHTML=A.length?`<table><tr><th>Observed gap</th><th>Proposed action</th><th>Workspace</th><th>Status</th><th></th></tr>`+(S.all?A:A.slice(0,4)).map(a=>`<tr><td class="n">${I(/outdated/i.test(a.gap)?'info':'warn',14,/outdated/i.test(a.gap)?'#8db0b5':'#f0b429')} &nbsp;${esc(a.gap)}</td><td class="n">${esc(a.action)}</td><td class="n">${I(WI[a.workspace]||'doc',14)} &nbsp;${esc(a.workspace||'')}</td><td class="n"><span class="pill sm ${a.status==='In progress'?'blue':a.status==='Done'?'grey':''}" style="cursor:pointer;min-width:84px" onclick="cycle('${a.id}','${a.status}')"><i></i>${esc(a.status)}</span></td><td class="n" style="width:30px"><button class="ed" onclick="edit('action','${a.id}')">${I('edit',14)}</button></td></tr>`).join('')+'</table>':'<div class="empty">No actions to review.</div>';
+ const bad=S.R.filter(r=>r.status==='complete'&&r.accurate===false).slice(0,10);
+ $('accbox').innerHTML='<h2>Brand accuracy</h2>'+(bad.length?bad.map(r=>`<div class="src" style="margin-top:6px"><span>${PIC(r.platform)}<span><b>${esc((S.P.find(p=>p.id===r.prompt_id)||{}).prompt||'')}</b><br><span class="m">${esc(r.accuracy_note||'Inaccurate description')}</span></span></span></div>`).join(''):'<div class="empty">No inaccurate descriptions in this range.</div>');
+}
+async function save(t,row,conflict){const q=conflict?sb.from(t).upsert(row,{onConflict:conflict}):sb.from(t).insert(row);const{error}=await q;if(error)alert(error.message);}
+const setStatus=(id,s)=>sb.from('ai_actions').update({status:s}).eq('id',id).then(load);
+const cycle=(id,s)=>{const o=['Needs review','In progress','Done'];setStatus(id,o[(o.indexOf(s)+1)%3])};
+const F={prompt:['ai_prompts',[['prompt','Money prompt'],['intent_type','Intent','Category,Alternatives,Integration,Branded,Comparison,Pricing'],['funnel_stage','Stage (e.g. Compare, Validate)'],['gap_label','Priority gap'],['gap_tone','Gap colour','amber,grey']]],
+ action:['ai_actions',[['gap','Observed gap'],['action','Proposed action'],['workspace','Workspace','Content,Authority,Brand playbook,Strategy'],['status','Status','Needs review,In progress,Done'],['move_title','Next-move headline'],['rationale','Rationale','area'],['evidence','Evidence'],['destination','Destination'],['owner','Suggested owner']]],
+ settings:['ai_settings',[['brand','Brand name shown in results'],['repeats','Repeats per prompt per tool'],['location','Location & language','UK · English,US · English,NG · English,DE · German']]]};
+function edit(k,id){
+ const[t,fs]=F[k],row=k==='settings'?S.set:(id?(k==='prompt'?S.P:S.A).find(x=>x.id===id):{})||{};
+ const m=document.createElement('div');m.className='mo';
+ m.innerHTML=`<form><h2>${id?'Edit':k==='settings'?'Model & run settings':'Add'} ${k==='prompt'?'prompt':k==='action'?'action':''}</h2>`+(k==='prompt'&&!id?'<label>Money prompts (one per line)</label><textarea name="prompt" rows="4"></textarea>':'')+fs.filter(f=>!(k==='prompt'&&!id&&f[0]==='prompt')).map(f=>`<label>${f[1]}</label>`+(f[2]==='area'?`<textarea name="${f[0]}" rows="3">${esc(row[f[0]])}</textarea>`:f[2]?`<select name="${f[0]}">${f[2].split(',').map(o=>`<option ${row[f[0]]===o?'selected':''}>${o}</option>`).join('')}</select>`:`<input name="${f[0]}" value="${esc(row[f[0]])}">`)).join('')+`<div class="r">${id?'<button type="button" id="del" style="color:#ff7b72">Delete</button>':''}<button type="button" id="cn">Cancel</button><button class="pri">Save</button></div></form>`;
+ document.body.appendChild(m);const f=m.querySelector('form'),cl=()=>m.remove();m.querySelector('#cn').onclick=cl;
+ if(id)m.querySelector('#del').onclick=async()=>{if(confirm('Delete this?')){await sb.from(t).delete().eq('id',id);cl();load()}};
+ f.onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(f));if(v.repeats)v.repeats=+v.repeats||5;
+  if(k==='settings')await save(t,{...v,client_id:S.c},'client_id');
+  else if(id)await sb.from(t).update(v).eq('id',id);
+  else if(k==='prompt')await save(t,v.prompt.split('\n').filter(x=>x.trim()).map(x=>({...v,prompt:x.trim(),client_id:S.c})));
+  else await save(t,{...v,client_id:S.c});cl();load()};
+}
+async function runChecks(){const rep=S.set.repeats||5,rows=[];S.P.forEach(p=>PL.forEach(pl=>{for(let k=1;k<=rep;k++)rows.push({client_id:S.c,prompt_id:p.id,platform:pl,repeat_n:k,status:'queued'})}));
+ if(!rows.length)return;const{error}=await sb.from('ai_runs').insert(rows);alert(error?error.message:rows.length+' checks queued. Your run worker fills in the results.')}
+draw();load();
+</script></body></html>
