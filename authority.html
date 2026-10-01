@@ -1,0 +1,169 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Authority</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06191c;--card:#0a2226;--line:#17383d;--tx:#e8f4f3;--mu:#8fb0ae;--ac:#17b3c4;--am:#f0b429;--gr:#2fbf71;--rd:#ef6461}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:13px 'Plus Jakarta Sans',system-ui,sans-serif;padding:20px}
+h1{font-size:30px;margin:0 0 4px;font-weight:800}h2{font-size:17px;margin:0;font-weight:700}small,.mu{color:var(--mu);font-size:12px}
+svg{flex:none;vertical-align:middle}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--tx);border-radius:8px;padding:8px 14px;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+button.p{background:var(--ac);border-color:var(--ac);color:#02181b;font-weight:700}
+button.lk{border:0;color:var(--ac);padding:0;font-size:12px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.tabs button.on{background:#0e4a52;border-color:var(--ac)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1.55fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:900px){.g4,.g2,.tabs{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+.c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:0}
+.c.am{border-color:var(--am)}.c.te{border-color:var(--ac)}
+.sh{display:flex;align-items:center;gap:12px}.sh>b{font-size:26px}.l{font-size:13px}
+.ic{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#0c2b30;color:var(--ac);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.ic.sq{border-radius:9px;width:34px;height:34px;color:var(--am)}.ic.t{color:var(--ac);border-radius:9px;width:34px;height:34px}
+.bar{height:5px;background:var(--line);border-radius:9px;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);border-radius:9px}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:8px}.hd .sp{margin-left:auto}
+.cap{color:var(--ac);font-size:11px;font-weight:700;letter-spacing:.1em}
+.nr{display:grid;grid-template-columns:38px 1.1fr 1.3fr auto 16px;gap:12px;align-items:center;padding:9px 6px;border-top:1px solid var(--line);cursor:pointer}
+.nr:hover,.pr:hover,tr.r:hover{background:#0d2c31}
+.av{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff}
+.pr{display:grid;grid-template-columns:34px 1fr 16px;gap:12px;align-items:center;padding:10px 8px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer}
+.mv{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px;font-size:12px}.mv .pill{font-size:10px}.mv .sp{margin-left:auto}
+table{width:100%;border-collapse:collapse;margin-top:8px}th{text-align:left;color:var(--mu);font-size:11px;font-weight:600;padding:6px}
+td{padding:9px 6px;border-top:1px solid var(--line);vertical-align:middle}tr.r{cursor:pointer}
+.pill{border-radius:99px;padding:3px 10px;font-size:11px;background:#123b42;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.Live,.Ready,.Published,.Agreed{background:#12482f;color:#7be3a8}.Contacted,.In-conversation{background:#0e3f55;color:#7cd0f0}
+.Researching{background:#1c3c4a;color:#9fc3d6}
+.Link-missing,.Destination-changed,.Needs-recheck{background:#4a3a0c;color:var(--am)}.Mention-live{background:#13405a;color:#9fd6ee}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.cv{display:grid;grid-template-columns:24px 1fr 24px 38%;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.cv .bar{margin:0}
+.ft{font-size:11px;color:var(--mu);margin-top:8px}
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:12px;width:min(460px,92vw)}
+dialog::backdrop{background:#000a}label{display:block;margin:8px 0 3px;color:var(--mu);font-size:12px}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:8px;font:inherit}
+.hide{display:none}#msg{color:var(--am);margin:8px 0}
+</style></head><body>
+<div class="top"><div><h1>Build authority. Keep what you earn.</h1><div class="mu" style="font-size:15px">Manage outreach, PR coverage and the links pointing to your money pages.</div></div>
+<div id="hb"></div><input type="file" id="csv" accept=".csv" class="hide"></div>
+<div id="msg"></div>
+<div class="tabs" id="tabs"></div><div id="view">Loading…</div>
+<dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
+<script>
+// ---- CONFIG ----
+const sb = parent.eval('sb');
+const CLIENT = parent.eval('S.cid');
+const MONTHLY_DEFAULT = 20;
+// ----------------
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const IC={grid:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+send:'<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+chart:'<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>',plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+up:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/>',
+chev:'<path d="m9 18 6-6-6-6"/>',target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+msg:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+unlink:'<path d="m18.84 12.25 1.72-1.71a5 5 0 0 0-.12-7.07 5 5 0 0 0-6.95 0l-1.72 1.71"/><path d="m5.17 11.75-1.71 1.71a5 5 0 0 0 .12 7.07 5 5 0 0 0 6.95 0l1.71-1.71"/><path d="M8 2v3"/><path d="M2 8h3"/><path d="M16 22v-3"/><path d="M22 16h-3"/>',
+swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+arrow:'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+bars:'<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>'};
+const I=(n,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const STAGES=['Researching','Ready','Contacted','In conversation','Agreed','Published'];
+const TYPES=['Listicle','Guest article','Digital PR','Partner link'];
+const PSTAT=['Live','Mention live','Link missing','Destination changed','Needs recheck'];
+const PTYPE=['Editorial link','Guest article','Partner link','PR mention'];
+const cls=s=>String(s).replace(/ /g,'-');
+const ini=s=>String(s||'?').replace(/^www\./,'').slice(0,2).toUpperCase();
+const hue=s=>['#1d5fbf','#31404a','#a24b6a','#2a7a5a'][(String(s).charCodeAt(0)+String(s).length)%4];
+const ago=d=>{if(!d)return '—';const n=Math.round((new Date().setHours(0,0,0,0)-new Date(d+'T00:00:00'))/864e5);return n<=0?'Today':n==1?'Yesterday':d};
+let T=[],P=[],S={monthly_target:MONTHLY_DEFAULT},tab='Overview';
+const TABS=[['Overview','grid'],['Targets & outreach','send'],['Secured placements','link'],['Link monitoring','chart']];
+const say=t=>$('#msg').textContent=t||'';
+
+async function load(){
+  if(!sb||!CLIENT){say('Could not find the Supabase client or client id.');return}
+  const [a,b,c]=await Promise.all([
+    sb.from('authority_targets').select('*').eq('client_id',CLIENT).order('created_at'),
+    sb.from('authority_placements').select('*').eq('client_id',CLIENT).order('created_at'),
+    sb.from('authority_settings').select('*').eq('client_id',CLIENT).maybeSingle()]);
+  if(a.error||b.error){say((a.error||b.error).message);return}
+  T=a.data||[];P=b.data||[];S=c.data||{monthly_target:MONTHLY_DEFAULT};render()}
+
+function render(){
+  $('#hb').innerHTML=`<button class="p" id="addT">${I('plus')} Add target</button> <button id="imp">${I('up')} Import CSV</button> <button id="dom">${I('link')} ${S.client_domain?esc(S.client_domain):'Set domain'}</button>`;
+  $('#addT').onclick=()=>formT();$('#imp').onclick=()=>$('#csv').click();
+  $('#dom').onclick=async()=>{const d=prompt('Client domain (e.g. example.com, no https or www)',S.client_domain||'');if(d===null)return;
+    const v=d.trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/\/.*$/,'');
+    const r=await sb.from('authority_settings').upsert({client_id:CLIENT,client_domain:v||null});
+    r.error?say(r.error.message):(say(''),load())};
+  $('#tabs').innerHTML=TABS.map(([t,i])=>`<button class="${t==tab?'on':''}" data-t="${t}">${I(i)} ${t}</button>`).join('');
+  $('#tabs').onclick=e=>{const b=e.target.closest('[data-t]');if(b){tab=b.dataset.t;render()}};
+  $('#view').innerHTML={'Overview':overview,'Targets & outreach':targets,'Secured placements':placements,'Link monitoring':monitoring}[tab]();
+  $('#view').onclick=click}
+
+function overview(){
+  const ord={'In conversation':0,'Agreed':1,'Contacted':2};
+  const ready=T.filter(t=>t.stage=='Ready').length,
+   active=T.filter(t=>t.stage in ord).sort((a,b)=>ord[a.stage]-ord[b.stage]),
+   attn=T.filter(t=>t.stage=='In conversation').length,
+   live=P.filter(p=>p.status=='Live'&&p.rel!='No link'),money=live.filter(p=>p.is_money).length,
+   unl=P.filter(p=>p.rel=='No link').length,
+   miss=P.filter(p=>p.status=='Link missing').length,chg=P.filter(p=>p.status=='Destination changed').length,rec=P.filter(p=>p.status=='Needs recheck').length,
+   tgt=S.monthly_target||MONTHLY_DEFAULT,pct=Math.min(100,live.length/tgt*100),
+   lv=P.map(p=>p.last_checked).filter(Boolean).sort().pop();
+  const card=(ic,n,l,s,v,m)=>`<div class="c"><div class="sh"><span class="ic">${I(ic,22)}</span><b>${n}</b><div><b class="l">${l}</b><br><small>${s}</small></div></div><div class="bar"><i style="width:${Math.min(100,v/Math.max(m,1)*100)}%"></i></div></div>`;
+  const warm=active.slice(0,3);
+  const mix=[['link','Editorial backlinks','Editorial link'],['file','Guest articles','Guest article'],['users','Partner links','Partner link'],['file','Unlinked PR mentions','PR mention']].map(([i,l,k])=>[i,l,P.filter(p=>p.placement_type==k).length]);
+  const mx=Math.max(1,...mix.map(m=>m[2]));
+  const prow=(ic,t,s,go)=>`<div class="pr" data-go="${go}"><span class="ic sq">${I(ic,18)}</span><div><b>${t}</b><br><small>${s}</small></div><span class="mu">${I('chev')}</span></div>`;
+  return `<div class="g4">${card('target',T.length,'Outreach targets',ready+' ready to contact',ready,T.length)}${card('msg',active.length,'Active conversations',attn+' need attention',attn,active.length)}${card('link',live.length,'Live backlinks',money+' to money pages',money,live.length)}${card('file',unl,'Unlinked mentions','PR & editorial coverage',unl,P.length)}</div>
+  <div class="g2"><div class="c te"><div class="hd"><span class="ic t">${I('file',18)}</span><div><span class="cap">NEXT ACTION</span></div><div style="border-left:1px solid var(--line);padding-left:12px"><h2>${warm.length?`Follow up on ${warm.length} warm conversation${warm.length>1?'s':''}.`:'No warm conversations right now.'}</h2><small>Editors have replied. Confirm the angle, destination page and publication date.</small></div></div>
+   ${warm.map(t=>`<div class="nr" data-edit="T${t.id}"><span class="av" style="background:${hue(t.site)}">${ini(t.site)}</span><div><b>${esc(t.site)}</b><br><small>${esc(t.destination||'No destination set')}</small></div><div><b>${esc(t.type)}</b><br><small>${esc(t.pitch||'')}</small></div><span class="pill ${cls(t.stage)}">${t.stage}${t.owner?' · '+esc(t.owner):''}</span><span class="mu">${I('chev')}</span></div>`).join('')}
+   <div class="mv"><b>Outreach moves:</b>${STAGES.slice(1).map((s,i)=>(i?'<span class="mu">→</span>':'')+`<span class="pill ${cls(s)}">${s}</span>`).join('')}<button class="p sp" data-go="Targets & outreach">Open conversations ${I('arrow',14)}</button></div></div>
+  <div class="c am"><div class="hd"><span class="ic sq" style="border-radius:50%;background:var(--am);color:#2a1d00;border:0">${I('alert',20)}</span><div><h2>Protect secured links</h2><small>Check for lost links, changes and pages we can't verify.</small></div></div>
+   ${prow('unlink',miss+' link'+(miss==1?'':'s')+' missing','Previously live',"Link monitoring")}${prow('swap',chg+' destination changed','Now points elsewhere',"Link monitoring")}${prow('clock',rec+' page'+(rec==1?'':'s')+' need rechecking','Timeout / blocked · Not marked lost',"Link monitoring")}
+   <button style="background:var(--am);border-color:var(--am);color:#2a1d00;font-weight:700;width:100%" data-go="Link monitoring">Review monitoring alerts ${I('arrow',14)}</button>
+   <div class="mv" style="justify-content:space-between"><small>Last verified: ${lv?ago(lv).toLowerCase():'—'}</small><button data-chk style="padding:4px 10px;font-size:11px">Check now ${I('refresh',12)}</button></div></div></div>
+  <div class="g2"><div class="c"><div class="hd"><span class="ic t">${I('target',18)}</span><div><h2>Sites to approach</h2><small>Manually add websites, track outreach and manage opportunities.</small></div><button class="lk sp" data-go="Targets & outreach">View all targets ${I('arrow',12)}</button></div>
+   <div style="display:flex;gap:8px;margin:10px 0"><input id="quick" placeholder="Paste a website or article URL…"><button class="p" id="quickAdd">Add</button></div>${tbl(T.slice(-3).reverse())}<div class="ft">Each target stores contact details, pitch angle, owner and follow-up date.</div></div>
+  <div class="c"><div class="hd"><span class="ic t" style="background:none;border:0">${I('bars',22)}</span><div><h2>Coverage mix</h2><small>Live links and unlinked coverage across all sources.</small></div><button class="lk sp" data-go="Secured placements">Open placements ${I('arrow',12)}</button></div>
+   ${mix.map(([i,l,n])=>`<div class="cv"><span class="mu">${I(i,18)}</span><span>${l}</span><b>${n}</b><div class="bar"><i style="width:${n/mx*100}%"></i></div></div>`).join('')}
+   <div style="margin-top:12px;display:flex;justify-content:space-between"><b>This month's link target</b><b>${live.length} / ${tgt} live backlinks</b></div><div class="bar" style="height:7px"><i style="width:${pct}%"></i></div>
+   <div class="ft" style="display:flex;justify-content:space-between"><span>Only published, verified links count.</span><span>Unlinked coverage is tracked separately.</span></div></div></div>
+  <div class="c"><div class="hd"><span class="ic t" style="background:none;border:0">${I('link',22)}</span><div><h2>Secured placements</h2><small>Published links and mentions, with current status and verification history.</small></div><small class="sp">Last verified ${lv?ago(lv).toLowerCase():'—'}</small><button class="lk" data-go="Secured placements">View all placements ${I('arrow',12)}</button></div>${plTbl(P.slice(0,4))}<div class="ft">Open a placement to see anchor text, link attributes, first seen date and recovery follow-up.</div></div>`}
+
+function tbl(rows){return `<table><tr><th>Website / opportunity</th><th>Type</th><th>Destination</th><th>Stage</th><th></th></tr>${rows.map(t=>`<tr class="r" data-edit="T${t.id}"><td><span style="display:flex;gap:10px;align-items:center"><span class="mu">${I('file',20)}</span><span><b>${esc(t.site)}</b><br><small>${esc(t.pitch||'')}</small></span></span></td><td>${esc(t.type)}</td><td>${esc(t.destination)}</td><td><span class="pill ${cls(t.stage)}">${t.stage}</span></td><td class="mu">${I('chev')}</td></tr>`).join('')||'<tr><td colspan=5 class="mu">Nothing here yet.</td></tr>'}</table>`}
+function targets(){return `<div class="c"><h2>Targets & outreach</h2><small>Click a row to edit. Use ▶ to move a target to its next stage.</small><table><tr><th>Website</th><th>Type</th><th>Destination</th><th>Owner</th><th>Follow-up</th><th>Stage</th><th></th></tr>${T.map(t=>`<tr class="r" data-edit="T${t.id}"><td><b>${esc(t.site)}</b><br><small>${esc(t.contact||'')}</small></td><td>${esc(t.type)}</td><td>${esc(t.destination)}</td><td>${esc(t.owner)}</td><td>${t.followup||''}</td><td><span class="pill ${cls(t.stage)}">${t.stage}</span></td><td><button data-next="${t.id}">▶</button></td></tr>`).join('')}</table></div>`}
+function plTbl(rows){return `<table><tr><th>Source page</th><th>Client destination</th><th>Placement</th><th>Link status</th><th>Last checked</th><th></th></tr>${rows.map(p=>`<tr class="r" data-edit="P${p.id}"><td><span style="display:flex;gap:10px;align-items:center"><span class="mu">${I('file',20)}</span><span><b>${esc(p.source_title)}</b><br><small>${esc(p.source_url||'')}</small></span></span></td><td>${esc(p.destination||'Brand mention only')}</td><td>${p.placement_type} · ${p.rel}</td><td><span class="pill ${cls(p.status)}"><i class="dot"></i>${p.status}</span></td><td>${ago(p.last_checked)}</td><td class="mu">${I('chev')}</td></tr>`).join('')||'<tr><td colspan=6 class="mu">Nothing here yet.</td></tr>'}</table>`}
+function placements(){return `<div class="c"><div class="hd"><div><h2>Secured placements</h2><small>Published links and mentions, with current status.</small></div><button class="p sp" id="addP">${I('plus')} Add placement</button></div>${plTbl(P)}</div>`}
+function monitoring(){const bad=P.filter(p=>['Link missing','Destination changed','Needs recheck'].includes(p.status));
+  return `<div class="c am"><h2>Monitoring alerts</h2><small>Click a placement, fix its status and update the last-checked date once verified.</small>${plTbl(bad)}</div>`}
+
+function click(e){
+  if(e.target.closest('[data-chk]')){const b=e.target.closest('[data-chk]');b.disabled=true;say('Checking links…');
+    sb.functions.invoke('check-links',{body:{client_id:CLIENT}}).then(({data,error})=>{b.disabled=false;
+      if(error)return say('Check failed: '+error.message);
+      say(data.checked+' checked · '+data.live+' live · '+data.changed+' destination changed · '+data.missing+' missing · '+data.recheck+' need recheck'+(data.skipped?' · '+data.skipped+' skipped (set the client domain first)':''));load()});return}
+  const g=e.target.closest('[data-go]');if(g){tab=g.dataset.go;return render()}
+  if(e.target.closest('#quickAdd')){const u=$('#quick').value.trim();if(u)save('authority_targets',{site:u.replace(/^https?:\/\//,'').split('/')[0],pitch:u,type:'Listicle',stage:'Researching'});return}
+  const n=e.target.closest('[data-next]');if(n){const t=T.find(x=>x.id==n.dataset.next),i=STAGES.indexOf(t.stage);if(i<STAGES.length-1)save('authority_targets',{id:t.id,stage:STAGES[i+1]});return}
+  const d=e.target.closest('[data-edit]');if(d){const id=d.dataset.edit.slice(1);d.dataset.edit[0]=='T'?formT(T.find(x=>x.id==id)):formP(P.find(x=>x.id==id))}
+  if(e.target.closest('#addP'))formP({})}
+
+function field(k,l,v,opts,type){return `<label>${l}</label>`+(opts?`<select name="${k}">${opts.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`:`<input name="${k}" type="${type||'text'}" value="${esc(v)}">`)}
+function open(title,table,o,html){$('#frm').innerHTML=`<h2>${title}</h2>${html}<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">${o.id?'<button type="button" id="del" style="margin-right:auto;color:var(--rd)">Delete</button>':''}<button value="x">Cancel</button><button class="p" value="ok">Save</button></div>`;
+  $('#dlg').showModal();
+  if(o.id)$('#del').onclick=async()=>{if(confirm('Delete this?')){await sb.from(table).delete().eq('id',o.id);$('#dlg').close();load()}};
+  $('#frm').onsubmit=async e=>{if(e.submitter.value!='ok')return;const v=Object.fromEntries(new FormData($('#frm')));Object.keys(v).forEach(k=>v[k]===''&&(v[k]=null));if(o.id)v.id=o.id;await save(table,v)}}
+function formT(t){t=t||{};open(t.id?'Edit target':'Add target','authority_targets',t,field('site','Website',t.site)+field('type','Type',t.type||'Listicle',TYPES)+field('destination','Destination page',t.destination)+field('stage','Stage',t.stage||'Researching',STAGES)+field('contact','Contact',t.contact)+field('pitch','Pitch angle',t.pitch)+field('owner','Owner',t.owner)+field('followup','Follow-up date',t.followup,0,'date'))}
+function formP(p){p=p||{};open(p.id?'Edit placement':'Add placement','authority_placements',p,field('source_title','Source page title',p.source_title)+field('source_url','Source URL',p.source_url)+field('destination','Client destination',p.destination)+field('placement_type','Placement',p.placement_type||'Editorial link',PTYPE)+field('rel','Link attribute',p.rel||'Follow',['Follow','Nofollow','No link'])+field('status','Status',p.status||'Live',PSTAT)+field('last_checked','Last checked',p.last_checked,0,'date')+field('anchor','Anchor text',p.anchor))}
+async function save(table,v){const r=v.id?await sb.from(table).update(v).eq('id',v.id):await sb.from(table).insert({...v,client_id:CLIENT});
+  if(r.error)say(r.error.message);else{say('');$('#dlg').close();load()}}
+$('#csv').onchange=async e=>{const f=e.target.files[0];if(!f)return;const rows=(await f.text()).trim().split(/\r?\n/).slice(1).map(l=>l.split(',').map(x=>x.trim().replace(/^"|"$/g,'')))
+  .filter(r=>r[0]).map(r=>({client_id:CLIENT,site:r[0],type:TYPES.includes(r[1])?r[1]:'Listicle',destination:r[2]||null,stage:'Researching'}));
+  const r=await sb.from('authority_targets').insert(rows);r.error?say(r.error.message):(say(rows.length+' targets imported (columns: site, type, destination).'),load())};
+load();
+</script></body></html>

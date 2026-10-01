@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retention & upsells</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06191c;--card:#0a2226;--line:#17383d;--tx:#e8f4f3;--mu:#8fb0ae;--ac:#17b3c4;--am:#f0b429;--gr:#2fbf71;--rd:#ef6461}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:13px 'Plus Jakarta Sans',system-ui,sans-serif;padding:20px}
+h1{font-size:30px;margin:0 0 4px;font-weight:800}h2{font-size:17px;margin:0;font-weight:700}small,.mu{color:var(--mu);font-size:12px}
+svg{flex:none;vertical-align:middle}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--tx);border-radius:8px;padding:8px 14px;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+button.p{background:var(--ac);border-color:var(--ac);color:#02181b;font-weight:700}
+button.am{background:var(--am);border-color:var(--am);color:#2a1d00;font-weight:700;width:100%;margin-top:8px}
+button.lk{border:0;color:var(--ac);padding:0;font-size:12px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.tabs button.on{background:#0e4a52;border-color:var(--ac)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1.55fr 1fr;gap:12px;margin-bottom:12px}.g3{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:900px){.g4,.g2,.g3,.tabs{grid-template-columns:1fr 1fr}.g2,.g3{grid-template-columns:1fr}}
+.c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}.c.am{border-color:var(--am)}.c.te{border-color:var(--ac)}
+.sh{display:flex;align-items:center;gap:12px}.sh b{font-size:24px}
+.ic{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#0c2b30;color:var(--ac);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.ic.t{border-radius:9px;width:34px;height:34px}
+.bar{height:5px;background:var(--line);border-radius:9px;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);border-radius:9px}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:8px}.sp{margin-left:auto}
+.cap{color:var(--ac);font-size:11px;font-weight:700;letter-spacing:.1em}
+.meta{display:flex;gap:30px;padding:10px 4px;border-top:1px solid var(--line);margin-top:8px}
+.mv{display:flex;gap:8px;margin-top:10px}.mv button{flex:1}
+.av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;background:#1d5fbf;color:#fff}
+table{width:100%;border-collapse:collapse;margin-top:8px}th{text-align:left;color:var(--mu);font-size:11px;font-weight:600;padding:6px}
+td{padding:9px 6px;border-top:1px solid var(--line);vertical-align:middle}tr.r{cursor:pointer}tr.r:hover{background:#0d2c31}
+.pill{border-radius:99px;padding:3px 10px;font-size:11px;background:#123b42;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.Done,.Resolved,.Approved,.Published,.Agreed{background:#12482f;color:#7be3a8}
+.Follow-up-due,.Scheduled,.Requested,.Proposed,.Scoped{background:#0e3f55;color:#7cd0f0}
+.Not-requested,.Not-started,.Discovery-needed,.Discovery{background:#1c3c4a;color:#9fc3d6}
+.Prepare-now,.Permission-needed,.Open{background:#4a3a0c;color:var(--am)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.rw{display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:1px solid var(--line)}.rw>div{flex:1}
+.stages{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:8px;color:var(--mu)}.stages b{color:var(--tx)}
+.ft{font-size:11px;color:var(--mu);margin-top:8px;display:flex;gap:16px;flex-wrap:wrap}
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:12px;width:min(460px,92vw)}dialog::backdrop{background:#000a}
+label{display:block;margin:8px 0 3px;color:var(--mu);font-size:12px}
+input[type=text],input[type=date],input[type=number],select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:8px;font:inherit}
+.hide{display:none}#msg{color:var(--am);margin:8px 0}
+</style></head><body>
+<div class="top"><div><h1>Make the next conversation count.</h1><div class="mu" style="font-size:15px">Collect feedback, prove value and plan the next stage of the relationship.</div></div><div id="hb"></div></div>
+<div id="msg"></div><div class="tabs" id="tabs"></div><div id="view">Loading…</div>
+<dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
+<script>
+const sb = parent.eval('sb');
+const CLIENT = parent.eval('S.cid');
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const IC={grid:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+msg:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+bars:'<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>',plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+chev:'<path d="m9 18 6-6-6-6"/>',file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/>',
+users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+check:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',arrow:'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'};
+const I=(n,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const cls=s=>String(s||'').replace(/ /g,'-'),ini=s=>String(s||'?').slice(0,2).toUpperCase();
+const fd=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+const TB={fb:'retention_feedback',cad:'retention_cadence',adv:'retention_advocacy',exp:'retention_expansions',tp:'retention_touchpoints',tk:'retention_tasks'};
+const ORD={cad:['sort',1],fb:['received',0],tp:['happened',0]};
+const CST=['Done','Follow-up due','Scheduled','Not requested','Prepare now','Discovery needed'];
+const AST=['Not requested','Not started','Permission needed','Requested','Approved','Published'];
+const XST=['Discovery','Scoped','Proposed','Agreed'];
+const F={
+ fb:[['received','Received','date'],['score','Score out of 10','number'],['quote','Client feedback','text'],['concern','Concern (leave blank if none)','text'],['action','Action to take','text'],['owner','Owner','text'],['due','Due','date'],['status','Status',['Open','Resolved']]],
+ cad:[['sort','Order','number'],['milestone','Milestone / trigger','text'],['action','Action','text'],['owner','Owner','text'],['status','Status',CST],['due','Next date','date']],
+ adv:[['kind','Item',['Public review','Case study','Publication approval']],['status','Status',AST],['note','Note','text']],
+ exp:[['title','Opportunity','text'],['stage','Stage',XST],['need','Client need','text'],['evidence','Evidence','text'],['scope','Proposed scope','text'],['value','Value','text'],['next_step','Next step','text']],
+ tp:[['happened','Date','date'],['note','What happened','text']],
+ tk:[['label','Renewal task','text']],
+ set:[['contract_end','Contract ends','date'],['decision_deadline','Decision deadline','date'],['extension_status','Extension status','text']]};
+const TABS=[['Overview','grid'],['Feedback & actions','msg'],['Reviews & case studies','star'],['Renewals & expansion','bars']];
+let D={fb:[],cad:[],adv:[],exp:[],tp:[],tk:[],set:{}},tab='Overview';
+const say=t=>$('#msg').textContent=t||'';
+
+async function load(){
+  if(!sb||!CLIENT){say('Could not find the Supabase client or client id.');return}
+  const ks=Object.keys(TB);
+  const rs=await Promise.all([...ks.map(k=>{const [c,a]=ORD[k]||['created_at',1];return sb.from(TB[k]).select('*').eq('client_id',CLIENT).order(c,{ascending:!!a})}),
+    sb.from('retention_settings').select('*').eq('client_id',CLIENT).maybeSingle()]);
+  const bad=rs.find(r=>r.error);if(bad){say(bad.error.message);return}
+  ks.forEach((k,i)=>D[k]=rs[i].data||[]);D.set=rs[ks.length].data||{};render()}
+
+function render(){
+  $('#hb').innerHTML=`<button class="p" data-add="tp">${I('plus')} Log touchpoint</button> <button data-add="cad">${I('cal')} Add milestone</button>`;
+  $('#tabs').innerHTML=TABS.map(([t,i])=>`<button class="${t==tab?'on':''}" data-go="${t}">${I(i)} ${t}</button>`).join('');
+  $('#view').innerHTML={'Overview':overview,'Feedback & actions':feedback,'Reviews & case studies':advocacy,'Renewals & expansion':renewals}[tab]();
+  $('#view').onclick=click;$('#tabs').onclick=click;$('#hb').onclick=click;
+  $('#view').onchange=e=>{const t=e.target.closest('[data-tk]');if(t)sb.from(TB.tk).update({done:t.checked}).eq('id',t.dataset.tk).then(load)}}
+
+function overview(){
+  const S=D.set,fb=D.fb[0],open=D.fb.filter(f=>f.status=='Open'&&f.concern),
+   nb=open.slice().sort((a,b)=>(a.due||'9')>(b.due||'9')?1:-1)[0],
+   nxt=D.cad.filter(c=>c.status=='Scheduled'&&c.due).sort((a,b)=>a.due>b.due?1:-1)[0],
+   days=S.contract_end?Math.round((new Date(S.contract_end)-new Date())/864e5):null,
+   tkd=D.tk.filter(t=>t.done).length,ex=D.exp[0];
+  const card=(ic,l,v,s,p)=>`<div class="c"><div class="sh"><span class="ic">${I(ic,22)}</span><div><small>${l}</small><br><b>${v}</b> <small>${s}</small></div></div><div class="bar"><i style="width:${p}%"></i></div></div>`;
+  return `<div class="g4">
+   ${card('msg','Last feedback',fb&&fb.score!=null?fb.score+' / 10':'—',fb?'Received '+fd(fb.received):'None yet',fb&&fb.score!=null?fb.score*10:0)}
+   ${card('alert','Open concerns',open.length,open[0]?esc(open[0].concern).slice(0,24):'All clear',open.length?Math.min(100,open.length*34):0)}
+   ${card('cal','Renewal date',fd(S.contract_end),S.decision_deadline?'Decision due '+fd(S.decision_deadline):'Set in Renewals',days==null?0:Math.max(0,Math.min(100,100-days/3.65)))}
+   ${card('cal','Next check-in',nxt?fd(nxt.due):'—',nxt?esc(nxt.milestone.split('·').pop().trim()):'Nothing scheduled',nxt?60:0)}</div>
+  <div class="g2"><div class="c te"><div class="hd"><span class="ic t">${I('file',18)}</span><span class="cap">NEXT BEST ACTION</span>
+    <div style="border-left:1px solid var(--line);padding-left:12px"><h2>${nb?esc(nb.action||'Resolve the open concern'):'No open actions right now.'}</h2><small>${nb?esc(nb.concern):'Log feedback to create the next action.'}</small></div></div>
+   ${nb?`<div class="meta"><span><small>Owner</small><br><b>${esc(nb.owner||'—')}</b></span><span><small>Due</small><br><b>${fd(nb.due)}</b></span></div>`:''}
+   ${fb&&fb.quote?`<small>Latest feedback: “${esc(fb.quote)}”</small>`:''}
+   <div class="mv"><button class="p" data-go="Feedback & actions">Open feedback action ${I('arrow',14)}</button>${nb?`<button data-resolve="${nb.id}">${I('check',14)} Mark resolved</button>`:`<button data-add="fb">Log feedback</button>`}</div></div>
+  <div class="c am"><div class="hd"><span class="ic" style="background:var(--am);color:#2a1d00;border:0;width:34px;height:34px">${I('alert',18)}</span><h2>Renewal preparation</h2>${D.tk.length&&tkd<D.tk.length?'<span class="pill Prepare-now sp">Start now</span>':''}</div>
+   <div>Contract ends <b>${fd(S.contract_end)}</b></div><div>Decision deadline <b>${fd(S.decision_deadline)}</b></div><small>Deadline based on contract terms.</small>
+   <div style="margin-top:8px">${D.tk.map(t=>`<div class="rw"><input type="checkbox" data-tk="${t.id}" ${t.done?'checked':''}><div>${esc(t.label)}</div></div>`).join('')||'<small>Add renewal tasks in Renewals & expansion.</small>'}</div>
+   <button class="am" data-go="Renewals & expansion">Open renewal plan ${I('arrow',14)}</button><div class="ft">Extension status: ${esc(S.extension_status||'Not discussed')}</div></div></div>
+  <div class="c" style="margin-bottom:12px"><div class="hd"><span class="ic t">${I('cal',18)}</span><div><h2>Your relationship cadence</h2><small>Milestones create actions. Completion records the outcome.</small></div><small class="sp">Click a row to edit</small></div>${cadTbl()}</div>
+  <div class="g3"><div class="c"><div class="hd"><span class="ic t" style="background:none;border:0">${I('star',20)}</span><h2>Reviews & case studies</h2><button class="lk sp" data-go="Reviews & case studies">Open advocacy workspace ${I('arrow',12)}</button></div>${advRows()}</div>
+  <div class="c"><div class="hd"><span class="ic t" style="background:none;border:0">${I('bars',20)}</span><h2>Expansion opportunities</h2><button class="lk sp" data-add="exp">${I('plus',12)} Add opportunity</button></div>${ex?expCard(ex):'<small>No opportunities yet. Add one when the client mentions a new need.</small>'}</div></div>
+  <div class="c"><div class="hd"><span class="mu">${I('clock',18)}</span><button class="lk" data-go="Feedback & actions">Touchpoint history ${I('arrow',12)}</button><div class="sp ft" style="margin:0">${D.tp.slice(0,2).map(t=>`<span>${fd(t.happened)} · ${esc(t.note)}</span>`).join('')||'<span>No touchpoints logged yet.</span>'}</div></div></div>`}
+
+function cadTbl(){return `<table><tr><th>Milestone / trigger</th><th>Action</th><th>Owner</th><th>Status / next date</th><th></th></tr>${D.cad.map(c=>`<tr class="r" data-edit="cad:${c.id}"><td>${esc(c.milestone)}</td><td>${esc(c.action)}</td><td><span class="av">${ini(c.owner)}</span></td><td><span class="pill ${cls(c.status)}"><i class="dot"></i>${c.status}${c.due&&!/^(Not requested|Discovery needed)$/.test(c.status)?' · '+fd(c.due):''}</span></td><td class="mu">${I('chev')}</td></tr>`).join('')||'<tr><td colspan=5 class="mu">No milestones yet.</td></tr>'}</table>`}
+function advRows(){return D.adv.map(a=>`<div class="rw" data-edit="adv:${a.id}" style="cursor:pointer"><b style="width:140px">${esc(a.kind)}</b><span class="pill ${cls(a.status)}">${a.status}</span><div><small>${esc(a.note||'')}</small></div><span class="mu">${I('chev')}</span></div>`).join('')||'<small>Nothing yet.</small>'}
+function expCard(x){return `<div class="rw" style="border:0;padding:0;cursor:pointer" data-edit="exp:${x.id}"><b>${esc(x.title)}</b><span class="pill ${cls(x.stage)}">${x.stage}</span></div>
+ <div style="margin-top:6px"><small>Client need</small> ${esc(x.need||'—')}<br><small>Evidence</small> ${esc(x.evidence||'—')}<br><small>Proposed scope</small> ${esc(x.scope||'—')} · <small>Value</small> ${esc(x.value||'Not scoped yet')}<br><small>Next step</small> ${esc(x.next_step||'—')}</div>
+ <div class="stages">${XST.map((s,i)=>(i?'<span>—</span>':'')+(s==x.stage?`<b>● ${s}</b>`:s)).join(' ')}</div>`}
+
+function feedback(){return `<div class="c"><div class="hd"><div><h2>Feedback & actions</h2><small>Click a row to edit. Resolve a concern once the client confirms.</small></div><button class="p sp" data-add="fb">${I('plus')} Log feedback</button></div>
+ <table><tr><th>Received</th><th>Score</th><th>Feedback</th><th>Concern</th><th>Owner</th><th>Due</th><th>Status</th></tr>${D.fb.map(f=>`<tr class="r" data-edit="fb:${f.id}"><td>${fd(f.received)}</td><td>${f.score??'—'}</td><td>${esc(f.quote)}</td><td>${esc(f.concern)}</td><td>${esc(f.owner)}</td><td>${fd(f.due)}</td><td><span class="pill ${cls(f.status)}">${f.status}</span></td></tr>`).join('')||'<tr><td colspan=7 class="mu">No feedback yet.</td></tr>'}</table></div>
+ <div class="c" style="margin-top:12px"><div class="hd"><h2>Touchpoint history</h2><button class="sp" data-add="tp">${I('plus')} Log touchpoint</button></div>${D.tp.map(t=>`<div class="rw" data-edit="tp:${t.id}" style="cursor:pointer"><b style="width:70px">${fd(t.happened)}</b><div>${esc(t.note)}</div></div>`).join('')||'<small>No touchpoints yet.</small>'}</div>`}
+function advocacy(){return `<div class="c"><div class="hd"><div><h2>Reviews & case studies</h2><small>Ask for honest reviews after a verified win. Quotes need client approval before publishing.</small></div><button class="p sp" data-add="adv">${I('plus')} Add item</button></div>${advRows()}</div>`}
+function renewals(){const S=D.set;return `<div class="g3"><div class="c am"><div class="hd"><h2>Renewal</h2><button class="sp" data-set="1">Edit dates</button></div><div>Contract ends <b>${fd(S.contract_end)}</b></div><div>Decision deadline <b>${fd(S.decision_deadline)}</b></div><div class="ft">Extension status: ${esc(S.extension_status||'Not discussed')}</div></div>
+ <div class="c"><div class="hd"><h2>Renewal tasks</h2><button class="sp" data-add="tk">${I('plus')} Add task</button></div>${D.tk.map(t=>`<div class="rw"><input type="checkbox" data-tk="${t.id}" ${t.done?'checked':''}><div>${esc(t.label)}</div><button class="lk" data-edit="tk:${t.id}">Edit</button></div>`).join('')||'<small>No tasks yet.</small>'}</div></div>
+ <div class="c"><div class="hd"><h2>Expansion opportunities</h2><button class="p sp" data-add="exp">${I('plus')} Add opportunity</button></div>${D.exp.map(x=>`<div style="padding:10px 0;border-top:1px solid var(--line)">${expCard(x)}</div>`).join('')||'<small>No opportunities yet.</small>'}</div>`}
+
+function click(e){const t=e.target;
+  const g=t.closest('[data-go]');if(g){tab=g.dataset.go;return render()}
+  const a=t.closest('[data-add]');if(a)return form(a.dataset.add);
+  const r=t.closest('[data-resolve]');if(r){sb.from(TB.fb).update({status:'Resolved'}).eq('id',r.dataset.resolve).then(load);return}
+  if(t.closest('[data-set]'))return form('set',D.set);
+  const d=t.closest('[data-edit]');if(d){const [k,id]=d.dataset.edit.split(':');form(k,D[k].find(x=>x.id==id))}}
+
+function form(k,r){r=r||{};const fs=F[k],tb=k=='set'?'retention_settings':TB[k],edit=k=='set'||r.id;
+  $('#frm').innerHTML=`<h2>${edit?'Edit':'Add'}</h2>`+fs.map(([n,l,t])=>`<label>${l}</label>`+(Array.isArray(t)?`<select name="${n}">${t.map(o=>`<option ${o==r[n]?'selected':''}>${o}</option>`).join('')}</select>`:`<input name="${n}" type="${t}" value="${esc(r[n])}">`)).join('')
+   +`<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">${r.id?'<button type="button" id="del" style="margin-right:auto;color:var(--rd)">Delete</button>':''}<button value="x">Cancel</button><button class="p" value="ok">Save</button></div>`;
+  $('#dlg').showModal();
+  if(r.id)$('#del').onclick=async()=>{if(confirm('Delete this?')){await sb.from(tb).delete().eq('id',r.id);$('#dlg').close();load()}};
+  $('#frm').onsubmit=async e=>{if(e.submitter.value!='ok')return;const v=Object.fromEntries(new FormData($('#frm')));
+    fs.forEach(([n,,t])=>{if(v[n]==='')v[n]=null;else if(t=='number')v[n]=Number(v[n])});
+    const q=k=='set'?sb.from(tb).upsert({...v,client_id:CLIENT}):r.id?sb.from(tb).update(v).eq('id',r.id):sb.from(tb).insert({...v,client_id:CLIENT});
+    const x=await q;x.error?say(x.error.message):(say(''),load())}}
+load();
+</script></body></html>
