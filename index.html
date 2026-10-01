@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GrowUp hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#061d1c;--side:#051817;--panel:#0a2928;--panel2:#0d3331;--line:#14403e;--line2:#2c5d5a;--accent:#0e9f9c;--accent2:#2fd4b4;--text:#eaf6f3;--mute:#8db3ae}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.45 'Plus Jakarta Sans',system-ui,sans-serif}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+b{font-weight:700}small{color:var(--mute);font-size:11.5px}p{margin:0}
+.app{display:grid;grid-template-columns:205px 1fr;min-height:100vh}
+aside{background:var(--side);border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:14px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:8px}.brand b{display:block;font-size:19px;font-weight:800;line-height:1}.brand small{font-size:7.5px;letter-spacing:.12em}
+.cw{position:relative}.client{width:100%;display:flex;align-items:center;gap:10px;padding:9px;background:var(--panel);border:1px solid var(--line);border-radius:10px;text-align:left}
+.client span:nth-child(2){flex:1;min-width:0}.client b,.client small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.av{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-weight:800;flex:none}.av.r{border-radius:50%;font-size:11px}
+.menu{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:5;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:6px;display:grid;gap:2px}
+.menu button{background:none;border:0;padding:8px 10px;border-radius:6px;text-align:left;display:flex;gap:8px;align-items:center}.menu button:hover{background:var(--line)}.menu .new{color:var(--accent2);font-weight:600}
+.nv{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--mute);font-weight:500;text-decoration:none}.nv:hover{background:#0b2e2c}.nv.on{background:#0e3b39;color:var(--text);font-weight:600}
+nav{display:grid;gap:2px}.bot{margin-top:auto;display:grid;gap:2px}
+.me{display:flex;align-items:center;gap:10px;background:none;border:0;border-top:1px solid var(--line);margin-top:10px;padding:14px 4px 0;text-align:left}.me span:nth-child(2){flex:1;font-weight:600}
+main{min-width:0}iframe{display:block;width:100%;height:100vh;border:0;background:var(--bg)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.empty{margin:24px;text-align:center;padding:50px 20px;color:var(--mute);display:grid;gap:10px}.empty h2{margin:0;color:var(--text);font-size:26px;font-weight:800}
+.btn{background:var(--accent);border:0;border-radius:8px;padding:10px 16px;font-weight:700;color:#fff}.ghost{background:transparent;border:1px solid var(--line2);border-radius:8px;padding:8px 14px}
+input{background:#072322;border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;display:block;margin-top:5px}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line2);border-radius:14px;padding:22px;width:min(440px,94vw)}dialog::backdrop{background:#000b}
+dialog h2{margin:0 0 4px;font-size:22px}label{color:var(--mute);font-size:12px;font-weight:500;display:block;margin-top:10px}
+.acts{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.fe{color:#ff9a8f;min-height:18px;margin-top:8px}.hint{color:var(--mute);margin-top:10px;font-size:12px}
+.login{max-width:340px;margin:14vh auto;display:grid;gap:10px}.login h2{margin:0}
+@media(max-width:1000px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.bot,nav{display:none}iframe{height:calc(100vh - 80px)}}
+</style></head>
+<body><div id="root"></div>
+<dialog id="cdlg"><form id="cf"><h2>New client</h2><label>Client name<input name="name" required></label><label>Start date<input type="date" name="start" required></label>
+<p class="fe" id="cfe"></p><div class="acts"><button type="button" class="ghost" id="ccn">Cancel</button><button class="btn">Create client</button></div><p class="hint">Creates the 90-day plan from your template.</p></form></dialog>
+<script src="config.js"></script>
+<script>
+const sb=supabase.createClient(CFG.url,CFG.key),$=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const IC={home:'<path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-7h6v7"/>',cal:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',spark:'<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',bars:'<path d="M5 21V10M12 21V4M19 21v-8"/>',book:'<path d="M4 19V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h14"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',cr:'<path d="M9 6l6 6-6 6"/>',ud:'<path d="M8 9l4-4 4 4M8 15l4 4 4-4"/>',plus:'<path d="M12 5v14M5 12h14"/>'};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24">${IC[n]}</svg>`;
+const MARK='<svg viewBox="0 0 32 32" width="34" height="34"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd4b4"/><stop offset="1" stop-color="#0e9f9c"/></linearGradient></defs><path d="M25 8.5A11 11 0 1 0 27 18H17" fill="none" stroke="url(#lg)" stroke-width="4" stroke-linecap="round"/></svg>';
+/* One page per item: id -> id.html. Add a new file (e.g. content.html) and it appears here automatically. */
+const NAV=[['overview','Client overview','home'],['delivery','90-day delivery','cal'],['strategy','Strategy & audits','target'],['content','Content','doc'],['authority','Authority','link'],['ai-visibility','AI visibility','spark'],['reports','Reports','bars']];
+const FOOT=[['playbook','Brand playbook','book'],['settings','Settings','cog']];
+let S={clients:[],cid:null,menu:0,email:''};
+const page=()=>(location.hash||'#delivery').slice(1);
+
+async function boot(){const{data:{session}}=await sb.auth.getSession();if(session){S.email=session.user.email||'';start()}else login()}
+function login(msg=''){$('#root').innerHTML=`<div class="card login"><div class="brand">${MARK}<b>GrowUp</b></div><h2>Sign in</h2><input id="em" type="email" placeholder="Email" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button class="btn" id="go">Sign in</button><p class="fe">${esc(msg)}</p></div>`;
+ $('#pw').onkeydown=e=>e.key=='Enter'&&$('#go').click();
+ $('#go').onclick=async()=>{const{data,error}=await sb.auth.signInWithPassword({email:$('#em').value,password:$('#pw').value});if(error)login(error.message);else{S.email=data.user.email;start()}}}
+async function loadClients(){const{data}=await sb.from('clients').select('id,name').order('created_at');S.clients=data||[];S.cid=localStorage.cid;
+ if(!S.clients.find(c=>c.id==S.cid)){S.cid=S.clients[0]?.id;S.cid?localStorage.cid=S.cid:localStorage.removeItem('cid')}}
+async function start(){await loadClients();
+ $('#root').innerHTML=`<div class="app"><aside id="sb"></aside><main><iframe id="fr" title="Page"></iframe><div id="soon" class="card empty" hidden></div></main></div>`;route()}
+function side(){const cl=S.clients.find(c=>c.id==S.cid),nm=(S.email||'user').split('@')[0],cur=page(),link=([id,t,i])=>`<a class="nv ${id==cur?'on':''}" href="#${id}">${ic(i)}${t}</a>`;
+ $('#sb').innerHTML=`<div class="brand">${MARK}<div><b>GrowUp</b><small>SEO &amp; AEO CONSULTANCY</small></div></div>
+ <div class="cw"><button class="client" id="cb"><span class="av">${esc((cl?.name||'+')[0].toUpperCase())}</span><span><b>${esc(cl?.name||'No client yet')}</b><small>Client workspace</small></span>${ic('ud')}</button>
+ ${S.menu?`<div class="menu">${S.clients.map(c=>`<button data-c="${c.id}">${esc(c.name)}</button>`).join('')}<button class="new" id="nc">${ic('plus')}New client</button></div>`:''}</div>
+ <nav>${NAV.map(link).join('')}</nav>
+ <div class="bot">${FOOT.map(link).join('')}<button class="me" id="so" title="Sign out"><span class="av r">${esc(nm.slice(0,2).toUpperCase())}</span><span>${esc(nm[0].toUpperCase()+nm.slice(1))} · GrowUp</span>${ic('cr')}</button></div>`}
+async function route(){const id=page(),it=[...NAV,...FOOT].find(x=>x[0]==id)||NAV[1],file=it[0]+'.html';side();
+ let ok=false;try{ok=(await fetch(file,{method:'HEAD',cache:'no-store'})).ok}catch(e){}
+ const fr=$('#fr'),sn=$('#soon');if(!fr)return;
+ if(ok){sn.hidden=true;fr.hidden=false;if(!fr.src.endsWith(file))fr.src=file}
+ else{fr.hidden=true;fr.removeAttribute('src');sn.hidden=false;sn.innerHTML=`<h2>${esc(it[1])}</h2><p>Coming soon. Add <b>${file}</b> to this folder and it will show up here.</p>`}}
+window.addEventListener('hashchange',()=>$('#fr')&&route());
+window.addEventListener('message',e=>{if(e.data&&e.data.t=='newclient')openClient()});
+function reload(){const f=$('#fr');if(f&&f.getAttribute('src'))try{f.contentWindow.location.reload()}catch(e){f.src=f.src}}
+function openClient(){$('#cf').reset();$('#cf').elements.start.value=new Date().toISOString().slice(0,10);$('#cfe').textContent='';$('#cdlg').showModal()}
+document.addEventListener('click',async e=>{const t=e.target.closest('#cb,#nc,#so,[data-c]');
+ if(S.menu&&!e.target.closest('.cw')){S.menu=0;side()}if(!t)return;
+ if(t.id=='cb'){S.menu=!S.menu;side()}
+ else if(t.dataset.c){S.cid=t.dataset.c;localStorage.cid=S.cid;S.menu=0;side();reload()}
+ else if(t.id=='nc'){S.menu=0;side();openClient()}
+ else if(t.id=='so'){await sb.auth.signOut();login()}});
+$('#ccn').onclick=()=>$('#cdlg').close();
+$('#cf').onsubmit=async e=>{e.preventDefault();const f=e.target.elements;
+ const{data,error}=await sb.rpc('create_client_from_template',{p_name:f.name.value.trim(),p_start:f.start.value});
+ if(error){$('#cfe').textContent=error.message;return}
+ $('#cdlg').close();await loadClients();S.cid=data;localStorage.cid=data;side();reload()};
+boot();
+</script></body></html>
