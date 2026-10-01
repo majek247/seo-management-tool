@@ -39,7 +39,7 @@ dialog h2{margin:0 0 4px;font-size:22px}label{color:var(--mute);font-size:12px;f
 <p class="fe" id="cfe"></p><div class="acts"><button type="button" class="ghost" id="ccn">Cancel</button><button class="btn">Create client</button></div><p class="hint">Creates the 90-day plan from your template.</p></form></dialog>
 <script src="config.js"></script>
 <script>
-const sb=supabase.createClient(CFG.url,CFG.key),$=s=>document.querySelector(s);
+if(top===self)location.replace('index.html#content');const sb=supabase.createClient(CFG.url,CFG.key),$=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const IC={home:'<path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-7h6v7"/>',cal:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',spark:'<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',bars:'<path d="M5 21V10M12 21V4M19 21v-8"/>',book:'<path d="M4 19V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h14"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',cr:'<path d="M9 6l6 6-6 6"/>',ud:'<path d="M8 9l4-4 4 4M8 15l4 4 4-4"/>',plus:'<path d="M12 5v14M5 12h14"/>'};
 const ic=n=>`<svg class="i" viewBox="0 0 24 24">${IC[n]}</svg>`;
@@ -54,7 +54,7 @@ const logo=c=>{const h=host(c?.website);return `<span class="av">${esc((c?.name|
 
 async function boot(){const{data:{session}}=await sb.auth.getSession();if(session){S.email=session.user.email||'';start()}else login()}
 function login(msg=''){$('#root').innerHTML=`<div class="card login"><div class="brand">${MARK}<b>GrowUp</b></div><h2>Sign in</h2><input id="em" type="email" placeholder="Email" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button class="btn" id="go">Sign in</button><p class="fe">${esc(msg)}</p></div>`;
- $('#pw').onkeydown=e=>e.key=='Enter'&&$('#go').click();
+ $('#pw').onkeydown=e=>{if(e.key=='Enter')$('#go').click()};
  $('#go').onclick=async()=>{const{data,error}=await sb.auth.signInWithPassword({email:$('#em').value,password:$('#pw').value});if(error)login(error.message);else{S.email=data.user.email;start()}}}
 async function loadClients(){const{data}=await sb.from('clients').select('id,name,website').order('created_at');S.clients=data||[];S.cid=localStorage.cid;
  if(!S.clients.find(c=>c.id==S.cid)){S.cid=S.clients[0]?.id;S.cid?localStorage.cid=S.cid:localStorage.removeItem('cid')}}

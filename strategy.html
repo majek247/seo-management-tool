@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Strategy & audits · GrowUp</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#061d1c;--panel:#0a2928;--panel2:#0d3331;--line:#14403e;--line2:#2c5d5a;--accent:#0e9f9c;--accent2:#2fd4b4;--text:#eaf6f3;--mute:#8db3ae;--amber:#f0b429}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.45 'Plus Jakarta Sans',system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+b{font-weight:700}small{color:var(--mute);font-size:11.5px}p{margin:0}
+main{padding:18px 22px 40px;min-width:0}
+.crumbs{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:12px;gap:12px}.crumbs i{font-style:normal;margin:0 6px}.crumbs b{color:var(--text);font-weight:600}
+.ghost{background:transparent;border:1px solid var(--line2);border-radius:8px;padding:8px 14px;display:inline-flex;align-items:center;gap:6px;font-weight:500}.ghost:hover:not(:disabled){background:var(--line)}
+.btn{background:var(--accent);border:0;border-radius:8px;padding:10px 16px;font-weight:700;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}.btn:hover:not(:disabled){background:#12b3b0}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin:14px 0 16px}.head .a{display:flex;gap:10px}
+h1{margin:0;font-size:clamp(30px,4vw,44px);line-height:1.05;font-weight:800;letter-spacing:-.025em}
+.lead{margin-top:8px;font-size:15px;color:#c4dcd8}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.eb{font-size:10.5px;letter-spacing:.14em;font-weight:700;color:var(--accent2);text-transform:uppercase}
+.mu{color:#b5d0cc}.mute{color:var(--mute)}
+.link{background:none;border:0;color:var(--accent2);padding:0;display:inline-flex;gap:6px;align-items:center;font-weight:600;white-space:nowrap}
+h2{margin:0;font-size:19px;font-weight:800}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}.ph p{margin-top:2px;font-size:12px;color:#b5d0cc}.ph .t{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.step{display:flex;gap:12px;align-items:center;padding:14px}.step.on{border-color:var(--accent2);box-shadow:0 0 0 1px var(--accent2) inset}
+.step .n{width:40px;height:40px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-weight:700;font-size:15px;flex:none}.step.on .n{border-color:var(--accent2)}
+.step>div{flex:1;min-width:0}.step b{display:block;font-size:13.5px}
+.bar{height:5px;border-radius:9px;background:var(--line);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent2);border-radius:9px}
+.next{display:flex;align-items:center;gap:14px;padding:12px 16px;margin-bottom:12px;border-color:var(--line2)}
+.next .ico{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;flex:none}.next .ico svg{width:20px;height:20px}
+.next .tx{flex:1;min-width:0;padding-left:14px;border-left:1px solid var(--line)}.next .tx b{display:block;font-size:14.5px}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-bottom:12px;align-items:start}
+.row{display:grid;gap:10px;align-items:center;padding:8px 6px;border-top:1px solid var(--line)}.row.h{color:var(--mute);font-size:12px;border-top:0;background:#072322;border-radius:6px}.row:not(.h){cursor:pointer}.row:not(.h):hover{background:#0d3230}
+.ev{grid-template-columns:26px 1.6fr .9fr 1.5fr 16px}
+.ck{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--line2);background:transparent;display:grid;place-items:center;padding:0;color:#04201f}.ck.on{background:var(--accent2);border-color:var(--accent2)}.ck svg{width:14px;height:14px;stroke-width:2.6}
+.ob{grid-template-columns:30px 1.3fr 1fr 16px;align-items:start;padding:12px 6px}
+.q{width:28px;height:28px;border-radius:50%;background:#12403d;display:grid;place-items:center;font:800 18px/1 Georgia,serif;color:var(--accent2);padding-top:6px}
+.ob b{font-size:13px;font-weight:600;display:block}.ob small{display:block;font-size:11px}.ob .im{font-size:11.5px;color:#b5d0cc}
+.fd{grid-template-columns:2.2fr 2fr .7fr 1.5fr 16px}.fd b{font-weight:600;font-size:13px;display:block}
+.fs{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sp{border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;background:#12403d;color:var(--mute);justify-self:start;white-space:nowrap}
+.sp.done,.sp.added{background:#0f4a43;color:var(--accent2)}.sp.in_progress{background:rgba(14,159,156,.28);color:#8ff0ec}.sp.needs_access,.sp.needs_review,.sp.Medium{background:#5c4812;color:#ffd978}.sp.High{background:#5a1f1a;color:#ff9a8f}
+.plan{display:grid;grid-template-columns:repeat(3,1fr)}.ph3{padding:4px 18px;border-left:1px solid var(--line);cursor:pointer}.ph3:first-child{border:0;padding-left:0}.ph3:hover b{color:var(--accent2)}.ph3 p{font-size:12px;color:#b5d0cc;margin:4px 0 8px}.ph3 small{display:block}
+.warn{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-top:12px;border:1px solid #8a6a16;background:#2b2410;border-radius:10px}.warn.ok{border-color:#1d6b5e;background:#0b2f2b}
+.warn .bx{width:20px;height:20px;border-radius:50%;background:var(--amber);color:#2b2410;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}.warn.ok .bx{background:var(--accent2)}.warn span:nth-child(2){flex:1}
+.fine{margin-top:10px;color:var(--mute);font-size:11px;text-align:right}
+.empty{text-align:center;padding:50px 20px;color:var(--mute);display:grid;gap:12px;justify-items:center}.empty h2{color:var(--text);font-size:24px}
+input,select,textarea{background:#072322;border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;display:block;margin-top:5px}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line2);border-radius:14px;padding:22px;width:min(560px,94vw)}dialog::backdrop{background:#000b}dialog h2{margin:0 0 4px;font-size:22px}
+label{color:var(--mute);font-size:12px;font-weight:500;display:block;margin-top:10px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.s2{grid-column:span 2}
+.acts{display:flex;justify-content:space-between;gap:8px;margin-top:18px}.acts span{display:flex;gap:8px}.fe{color:#ff9a8f;min-height:18px;margin-top:8px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);background:#5a1f1a;border:1px solid #a4443b;padding:10px 16px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none}#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1000px){.steps{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.plan{grid-template-columns:1fr}.ph3{border:0;padding:8px 0}.head{flex-direction:column}.next{flex-wrap:wrap}.fd{grid-template-columns:2fr 1fr 16px}.fd .hd{display:none}.ev{grid-template-columns:26px 1fr 16px}.ev .hd{display:none}.ob{grid-template-columns:30px 1fr 16px}.ob .im{display:none}}
+</style></head>
+<body><div id="root"></div><div id="toast"></div>
+<dialog id="dlg"><form id="f"><h2 id="dt"></h2><div class="g2" id="ff"></div>
+<p class="fe" id="fe"></p><div class="acts"><button type="button" class="ghost" id="del">Delete</button><span><button type="button" class="ghost" id="cn">Cancel</button><button class="btn">Save</button></span></div></form></dialog>
+<script src="config.js"></script>
+<script>
+const sb=supabase.createClient(CFG.url,CFG.key),$=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const IC={doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',ar:'<path d="M5 12h14M13 6l6 6-6 6"/>',cr:'<path d="M9 6l6 6-6 6"/>',ne:'<path d="M7 17 17 7M8 7h9v9"/>',plus:'<path d="M12 5v14M5 12h14"/>',ck:'<path d="M5 12l5 5L20 7"/>'};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24">${IC[n]}</svg>`;
+const SS={done:'Done',in_progress:'In progress',needs_access:'Needs access'},PL={added:'Added to plan',needs_review:'Needs review',parked:'Parked'},PR=['High','Medium','Low'],PS={draft:'Draft',submitted:'Submitted',approved:'Approved'};
+const FM={
+ source:{t:'strategy_sources',n:'evidence source',a:'src',f:[['name','Source','text',1],['status','Status',SS],['detail','Evidence','text']]},
+ finding:{t:'strategy_findings',n:'finding',a:'fin',f:[['title','Finding','text',1],['evidence','Supporting evidence','text',1],['response','Recommended response','text',1],['priority','Priority',PR],['plan_status','Plan status',PL]]},
+ objection:{t:'strategy_objections',n:'objection',a:'obj',f:[['quote','Buyer quote','area',1],['calls','Sales calls','number'],['gap','Gap type','text'],['source','Source','text',1],['implication','Implication','area',1]]},
+ phase:{t:'strategy_phases',n:'phase',a:'ph',f:[['label','Days','text'],['name','Name','text'],['body','What happens','area',1],['foot','Focus or exit gate','text',1]]}};
+const DF={source:{status:'in_progress'},finding:{priority:'High',plan_status:'needs_review'},objection:{calls:1},phase:{}};
+let S={cl:null,src:[],fin:[],obj:[],ph:[],pl:{status:'draft',version:'Draft v1'},all:false,e:null};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
+
+async function load(){
+ const{data:{session}}=await sb.auth.getSession();
+ if(!session){$('#root').innerHTML='<main><div class="card empty">Sign in from the main app first, then reopen this tab.</div></main>';return}
+ const c=(await sb.from('clients').select('*').order('created_at')).data||[];
+ S.cl=c.find(x=>x.id==localStorage.cid)||c[0];
+ if(!S.cl){$('#root').innerHTML='<main><div class="card empty">Create a client first.</div></main>';return}
+ const q=t=>sb.from(t).select('*').eq('client_id',S.cl.id).order('sort').order('created_at');
+ const r=await Promise.all([q('strategy_sources'),q('strategy_findings'),q('strategy_objections'),q('strategy_phases'),sb.from('strategy_plans').select('*').eq('client_id',S.cl.id).maybeSingle()]);
+ const bad=r.find(x=>x.error);
+ if(bad){$('#root').innerHTML=`<main><div class="card empty">${esc(bad.error.message)}<br>Run strategy_schema.sql in Supabase.</div></main>`;return}
+ [S.src,S.fin,S.obj,S.ph]=r.slice(0,4).map(x=>x.data);S.pl=r[4].data||{status:'draft',version:'Draft v1'};render()}
+
+function render(){
+ const cl=S.cl,top=`<div class="crumbs"><span>Clients<i>/</i>${esc(cl.name)}<i>/</i><b>Strategy &amp; audits</b></span><button class="ghost" data-act="cv">Client view ${ic('ne')}</button></div>
+ <div class="head"><div><h1>Build the plan from the evidence.</h1><p class="lead">Combine search findings and buyer objections into a focused 90-day strategy.</p></div><div class="a"><button class="btn" data-act="add">Add evidence ${ic('plus')}</button><button class="ghost" data-act="share">Share for review ${ic('ne')}</button></div></div>`;
+ if(!S.src.length&&!S.fin.length&&!S.obj.length&&!S.ph.length){$('#root').innerHTML=`<main>${top}<div class="card empty"><h2>No strategy yet for ${esc(cl.name)}.</h2><p>Load the starter template, then edit it to match this client.</p><button class="btn" data-act="seed">Load starter template</button></div></main>`;return}
+ const T=S.src.length,D=S.src.filter(x=>x.status=='done').length,F=S.fin.length,A=S.fin.filter(x=>x.plan_status=='needs_review').length,R=F-A,AD=S.fin.filter(x=>x.plan_status=='added').length,NA=S.src.filter(x=>x.status=='needs_access').length,ps=S.pl.status,pct=(a,b)=>b?Math.round(a/b*100):0;
+ const act=ps!='draft'?3:A?1:D<T?0:2,
+ steps=[['Collect evidence',`${D} / ${T} sources ready`,pct(D,T)],['Review findings',`${R} / ${F} reviewed`,pct(R,F)],['Build the plan',`${PS[ps]} · ${AD} priorit${AD==1?'y':'ies'}`,pct(AD,F)],['Client approval',ps=='draft'?'Not submitted':PS[ps],ps=='approved'?100:ps=='submitted'?50:0]];
+ const bl=[];if(NA)bl.push('resolve source access');if(A)bl.push(`review ${A} finding${A>1?'s':''}`);
+ const nxA=S.fin.find(x=>x.plan_status=='needs_review'),nxS=S.src.find(x=>x.status!='done');
+ const nx=ps!='draft'?['Plan submitted for client approval.','Approved priorities flow into 90-day delivery.','','']:A?[`Review the ${A==1?'remaining finding':NUMW(A)+' remaining findings'}.`,'Confirm their impact before adding them to the plan.','Continue review','cont']:D<T?['Finish collecting evidence.',`${T-D} source${T-D>1?'s':''} still open.`,'Open evidence','src']:['The plan is ready for client review.','Submit it for approval to lock the priorities.','Submit for approval','submit'];
+ const fl=S.all?S.fin:S.fin.slice(0,3);
+ $('#root').innerHTML=`<main>${top}
+ <div class="steps">${steps.map((s,i)=>`<div class="card step ${i==act?'on':''}"><span class="n">${String(i+1).padStart(2,'0')}</span><div><b>${s[0]}</b><small>${esc(s[1])}</small><div class="bar"><i style="width:${s[2]}%"></i></div></div></div>`).join('')}</div>
+ <div class="card next"><span class="ico">${ic('doc')}</span><span class="eb">Next step</span><div class="tx"><b>${nx[0]}</b><small>${nx[1]}</small></div>${nx[2]?`<button class="btn" data-act="${nx[3]}">${nx[2]} ${ic('ar')}</button>`:''}</div>
+ <div class="two"><div class="card"><div class="ph"><div><h2>Evidence collected</h2><p>Record the work and attach its source.</p></div><button class="link" data-act="add">Add evidence ${ic('plus')}</button></div>
+ <div class="row ev h"><span></span><span>Source</span><span>Status</span><span class="hd">Evidence</span><span></span></div>
+ ${S.src.map(s=>`<div class="row ev" data-k="source" data-id="${s.id}"><button class="ck ${s.status=='done'?'on':''}" data-ck="${s.id}" aria-label="Mark ${esc(s.name)} done">${s.status=='done'?ic('ck'):''}</button><span>${esc(s.name)}</span><span class="sp ${s.status}">${SS[s.status]}</span><small class="hd">${esc(s.detail||'')}</small>${ic('cr')}</div>`).join('')||'<div class="empty">No sources yet.</div>'}</div>
+ <div class="card"><div class="ph"><div><h2>Buyer objections to address</h2><p>Use the sales team's words to shape the plan.</p></div><button class="link" data-act="addob">Add objection ${ic('plus')}</button></div>
+ ${S.obj.map(o=>`<div class="row ob" data-k="objection" data-id="${o.id}"><span class="q">“</span><span><b>“${esc(o.quote)}”</b><small>${o.calls} sales call${o.calls==1?'':'s'}${o.gap?' · '+esc(o.gap):''}</small>${o.source?`<small>Source: ${esc(o.source)}</small>`:''}</span><span class="im"><small>Implication</small>${esc(o.implication||'')}</span>${ic('cr')}</div>`).join('')||'<div class="empty">No objections logged.</div>'}
+ <p class="fine" style="text-align:left">Each objection can be linked to a finding and a planned page.</p></div></div>
+ <div class="card" style="margin-bottom:12px"><div class="ph"><div class="t"><h2>Turn findings into priorities</h2><small>${R} reviewed · ${A} awaiting review</small></div><span style="display:flex;gap:14px"><button class="link" data-act="addf">Add finding ${ic('plus')}</button><button class="link" data-act="all">${S.all?'Show fewer':'View all findings'} ${ic('ar')}</button></span></div>
+ <div class="row fd h"><span>Finding &amp; supporting evidence</span><span class="hd">Recommended response</span><span>Priority</span><span>Plan status</span><span></span></div>
+ ${fl.map(x=>`<div class="row fd" data-k="finding" data-id="${x.id}"><span><b>${esc(x.title)}</b><small>${esc(x.evidence||'')}</small></span><span class="hd">${esc(x.response||'')}</span><span class="sp ${x.priority}">${x.priority}</span><span class="fs"><span class="sp ${x.plan_status}">${PL[x.plan_status]}</span>${x.plan_status=='needs_review'?`<span class="link">Review ${ic('ar')}</span>`:''}</span>${ic('cr')}</div>`).join('')||'<div class="empty">No findings yet.</div>'}
+ <p class="fine" style="text-align:left">Prioritise by buyer impact, evidence confidence, effort and dependencies.</p></div>
+ <div class="card"><div class="ph"><div class="t"><h2>90-day plan</h2><span class="sp in_progress">${esc(S.pl.version||'Draft v1')}</span></div><button class="link" data-act="addp">Add phase ${ic('plus')}</button></div>
+ <div class="plan">${S.ph.map(p=>`<div class="ph3" data-k="phase" data-id="${p.id}"><b>${esc(p.label||'')} · ${esc(p.name||'')}</b><p>${esc(p.body||'')}</p><small>${esc(p.foot||'')}</small></div>`).join('')||'<div class="empty">No phases yet.</div>'}</div></div>
+ <div class="warn ${bl.length||ps!='draft'?'':'ok'}"><span class="bx">${bl.length||ps!='draft'?'!':'✓'}</span><span>${ps!='draft'?'Plan '+PS[ps].toLowerCase()+'.':bl.length?'Before client review: '+bl.join(' and ')+'.':'Everything is reviewed. Ready for client review.'}</span><button class="ghost" data-act="submit" ${bl.length||ps!='draft'?'disabled':''}>Submit for approval</button></div>
+ <p class="fine">Approved priorities flow into 90-day delivery.</p></main>`;
+ S.nxA=nxA;S.nxS=nxS}
+const NUMW=n=>['No','One','Two','Three','Four','Five','Six','Seven','Eight','Nine'][n]?.toLowerCase()||n;
+
+document.addEventListener('click',async e=>{
+ const t=e.target.closest('[data-k],[data-ck],[data-act]');if(!t||!$('#root').contains(t))return;const d=t.dataset;
+ if(d.ck){const s=S.src.find(x=>x.id==d.ck);upd('strategy_sources',s.id,{status:s.status=='done'?'in_progress':'done'})}
+ else if(d.act){const a=d.act;
+  if(a=='add')openForm('source');else if(a=='addob')openForm('objection');else if(a=='addf')openForm('finding');else if(a=='addp')openForm('phase');
+  else if(a=='all'){S.all=!S.all;render()}
+  else if(a=='cont')S.nxA&&openForm('finding',S.nxA.id);
+  else if(a=='src')S.nxS&&openForm('source',S.nxS.id);
+  else if(a=='share')toast('Share for review is not set up yet');
+  else if(a=='cv')toast('Client view is not set up for Strategy yet');
+  else if(a=='seed'){const{error}=await sb.rpc('seed_strategy',{p_client:S.cl.id});error?toast(error.message):load()}
+  else if(a=='submit'){const{error}=await sb.from('strategy_plans').upsert({client_id:S.cl.id,status:'submitted',version:S.pl.version||'Draft v1'},{onConflict:'client_id'});error?toast(error.message):load()}}
+ else if(d.k)openForm(d.k,d.id)});
+async function upd(t,id,v){const{error}=await sb.from(t).update(v).eq('id',id);error?toast(error.message):load()}
+
+const fld=([k,l,t,w],v,i)=>{const sel=Array.isArray(t)||(t&&t.constructor==Object),req=i==0?'required':'';
+ const inner=sel?`<select name="${k}">${(Array.isArray(t)?t.map(x=>[x,x]):Object.entries(t)).map(([a,b])=>`<option value="${a}" ${a==v?'selected':''}>${b}</option>`).join('')}</select>`:t=='area'?`<textarea name="${k}" rows="2" ${req}>${esc(v)}</textarea>`:`<input name="${k}" type="${t=='number'?'number':'text'}" value="${esc(v)}" ${req}>`;
+ return`<label class="${w?'s2':''}">${l}${inner}</label>`};
+function openForm(k,id){const m=FM[k],it=id?S[m.a].find(x=>x.id==id):DF[k];S.e={k,id};
+ $('#dt').textContent=(id?'Edit ':'Add ')+m.n;$('#ff').innerHTML=m.f.map((f,i)=>fld(f,it[f[0]]??'',i)).join('');
+ $('#del').style.display=id?'':'none';$('#fe').textContent='';$('#dlg').showModal()}
+$('#cn').onclick=()=>$('#dlg').close();
+$('#del').onclick=async()=>{if(!confirm('Delete this item?'))return;const{k,id}=S.e,{error}=await sb.from(FM[k].t).delete().eq('id',id);if(error)$('#fe').textContent=error.message;else{$('#dlg').close();load()}};
+$('#f').onsubmit=async e=>{e.preventDefault();const{k,id}=S.e,m=FM[k],v={};
+ m.f.forEach(([n,,t])=>{const x=e.target.elements[n].value.trim();v[n]=t=='number'?(+x||0):(x||null)});
+ if(!id){v.client_id=S.cl.id;v.sort=Math.max(0,...S[m.a].map(x=>x.sort||0))+1}
+ const{error}=await(id?sb.from(m.t).update(v).eq('id',id):sb.from(m.t).insert(v));
+ if(error)$('#fe').textContent=error.message;else{$('#dlg').close();load()}};
+addEventListener('storage',e=>e.key=='cid'&&load());
+load();
+</script></body></html>
